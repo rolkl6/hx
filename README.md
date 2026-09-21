@@ -152,12 +152,45 @@ const VERSION = 'v1.0.1';   // 原来是 v1.0.0
 ### 跑测试
 
 ```bash
+# 1) 逻辑单元测试（不需要浏览器，71 项断言）
 node tests/logic-test.mjs
+
+# 2) iPhone(WebKit) 真实触摸端到端测试 —— 最接近真机的一层
+#    需要 playwright，在含 node_modules 的目录里运行
+node tests/ios-e2e.mjs https://rolkl6.github.io/hx/index.html
+
+# 3) 线上部署验证（HTTPS / PWA 装配 / 断网重载）
+node tests/live-check.mjs
 ```
 
-用最小 DOM 桩加载真实的 `app.js`，模拟点击并断言界面与存储结果，
+`logic-test.mjs` 用最小 DOM 桩加载真实的 `app.js`，模拟点击并断言界面与存储结果，
 覆盖：计时状态机、净滑行时长计算、分趟记录、历史统计、删除记录、
 冷启动恢复未结束的计时、超 18 小时陈旧会话的处理。
+
+> ### ⚠️ 为什么必须有 `ios-e2e.mjs`
+>
+> v1.0.0 曾经在 iPhone 上**所有按钮都点不动**，但当时所有测试都是绿的。
+> 原因是测试方法本身有两个盲区：
+>
+> 1. **`element.click()` 绕过命中测试**。它直接把事件派发给元素，即使元素被
+>    别的层盖住也"成功"。真实手指点击要先做命中测试，被遮挡就什么都不会发生。
+> 2. **只测了 Chromium**。iPhone 是 WebKit，引擎不同。
+>
+> `ios-e2e.mjs` 用 Playwright 的 WebKit + iPhone 设备仿真，一律使用**真实 tap**，
+> 并额外对每个可见交互元素做 `document.elementFromPoint` 命中断言。
+> 它在修复前的版本上会失败 8 项以上，在修复后 54 项全绿。
+
+### 修改样式时务必注意
+
+CSS 里给元素设 `display` 会**覆盖浏览器默认的 `[hidden]{display:none}`**。
+本项目已加全局兜底：
+
+```css
+[hidden] { display: none !important; }
+```
+
+如果你新增了带 `hidden` 属性的元素，请确认它在隐藏时 `getComputedStyle(el).display === 'none'`，
+否则它可能变成一层看不见却会吃掉点击的遮罩。
 
 ---
 
