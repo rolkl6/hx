@@ -1,6 +1,8 @@
 param(
   [int]$Port = 9444,
-  [int]$Attempts = 3
+  [int]$Attempts = 3,
+  [string]$Script = "cdp-smoke.mjs",
+  [string]$Url = "http://127.0.0.1:8765/index.html"
 )
 
 $ErrorActionPreference = 'Continue'
@@ -39,11 +41,11 @@ for ($i = 1; $i -le $Attempts; $i++) {
   }
 
   $env:CDP_PORT = "$Port"
-  $env:TEST_URL = "http://127.0.0.1:8765/index.html"
+  $env:TEST_URL = $Url
   $node = (Get-Command node).Source
   $nodeOut = "$root\tests\console.txt"
   $nodeErr = "$root\tests\console-err.txt"
-  $np = Start-Process -FilePath $node -ArgumentList @("$root\tests\cdp-smoke.mjs") -NoNewWindow -Wait -PassThru `
+  $np = Start-Process -FilePath $node -ArgumentList @("$root\tests\$Script") -NoNewWindow -Wait -PassThru `
     -RedirectStandardOutput $nodeOut -RedirectStandardError $nodeErr
   $code = $np.ExitCode
   Write-Output "TEST_EXIT=$code"

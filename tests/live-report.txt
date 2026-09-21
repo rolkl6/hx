@@ -1,0 +1,65 @@
+=== 线上地址: https://rolkl6.github.io/hx/index.html ===
+
+--- 主流程 ---
+page.url                     "https://rolkl6.github.io/hx/index.html"
+page.protocol                "https:"
+page.title                   "滑雪计时"
+pwa.manifestHref             "manifest.json"
+pwa.manifestStatus           200
+pwa.manifestType             "application/json; charset=utf-8"
+pwa.manifestName             "滑雪计时"
+pwa.manifestDisplay          "standalone"
+pwa.manifestIcons            3
+pwa.appleTouchIcon           true
+pwa.themeColor               "#070b12"
+pwa.iconFetchStatus          200
+sw.registered                true
+sw.scope                     "https://rolkl6.github.io/hx/"
+sw.active                    true
+sw.state                     "activated"
+sw.controller                true
+init.mainTime                "00:00:00"
+init.primary                 "开始滑雪"
+init.sessionsEmpty           true
+modal.title                  "结束本次滑雪？"
+saved.mainTime               "00:00:00"
+saved.sessions               1
+saved.skiMs                  300000
+saved.restMs                 60000
+saved.runs                   [180000,120000]
+records.sumSki               "5m"
+records.sumRuns              "2"
+records.hasCard              true
+
+--- 离线重载 ---
+offline.title                "滑雪计时"
+offline.appRendered          true
+offline.tabCount             3
+offline.bodyBg               "rgb(7, 11, 18)"
+offline.heroRadius           "26px"
+offline.sessionsKept         1
+
+--- 断言 ---
+PASS  线上为 HTTPS
+PASS  清单可解析且命名正确
+PASS  清单 MIME = application/json
+PASS  清单 display=standalone
+PASS  apple-touch-icon 存在且可取到
+PASS  Service Worker 已注册
+PASS  Service Worker 已 active
+PASS  SW 作用域在 /hx/ 子路径下
+PASS  初始为干净状态
+PASS  滑行 3+2 分钟累计正确
+PASS  休息 1 分钟计入
+PASS  两趟时长正确
+PASS  记录页统计正确
+PASS  【离线】页面仍能打开
+PASS  【离线】CSS 已生效
+PASS  【离线】历史数据完好
+
+--- 页面级错误 ---
+(none)
+
+测试后残留的 ski.* 键: []
+
+RESULT: PASS

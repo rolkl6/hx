@@ -3,6 +3,11 @@
 一个记录**滑雪时长**的网页应用（PWA）。部署一次，在 iPhone 上「添加到主屏幕」，
 就和原生 App 一样全屏运行、**离线可用**、数据只存在自己手机里。
 
+> ### 🚀 线上地址：<https://rolkl6.github.io/hx/>
+>
+> 直接用 **iPhone Safari** 打开上面这个链接 → 分享 → 添加到主屏幕，即可使用。
+> （部署在 GitHub Pages 上，仓库：<https://github.com/rolkl6/hx>）
+
 - **净滑行时长**：休息/坐缆车的时间自动扣除，只算真正在滑的时间
 - **分趟记录**：每趟单独计时，随时看这一趟滑了多久
 - **历史统计**：累计滑行时长、总趟数、滑雪天数、最长一趟
@@ -114,8 +119,11 @@ ski-timer/
 ├── tools/
 │   └── make-icons.mjs      重新生成图标（node tools/make-icons.mjs）
 └── tests/
-    ├── logic-test.mjs      逻辑单元测试（不需要浏览器）
-    └── cdp-smoke.mjs       无头浏览器端到端测试（可选）
+    ├── logic-test.mjs      逻辑单元测试（不需要浏览器，71 项断言）
+    ├── live-check.mjs      线上部署验证（HTTPS / PWA 装配 / 断网重载）
+    ├── cdp-smoke.mjs       本地端到端测试（无头浏览器）
+    ├── run-smoke.ps1       Windows 下启动无头浏览器跑上面两个脚本
+    └── live-report.txt     最近一次线上验证报告
 ```
 
 ---
