@@ -1,12 +1,12 @@
-=== iPhone(WebKit 真实触摸) E2E: https://rolkl6.github.io/hx/index.html ===
+=== iPhone(WebKit 真实触摸) E2E: http://127.0.0.1:8765/index.html ===
 UA: Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHT
 
 PASS  hit-test #btnPrimary 可被点中   "button#btnPrimary.btn.btn-primary"
 PASS  hit-test #chipWake 可被点中   "button#chipWake.chip.is-on"
-PASS  hit-test .tab[data-tab="timer"] 可被点中   "span.tab-ico"
-PASS  hit-test .tab[data-tab="records"] 可被点中   "span.tab-ico"
-PASS  hit-test .tab[data-tab="settings"] 可被点中   "span.tab-ico"
-PASS  hit-test #hintClose 可被点中   "button#hintClose"
+PASS  hit-test .tab[data-tab="timer"] 可被点中   "use.[object.SVGAnimatedString]"
+PASS  hit-test .tab[data-tab="records"] 可被点中   "svg.[object.SVGAnimatedString]"
+PASS  hit-test .tab[data-tab="settings"] 可被点中   "use.[object.SVGAnimatedString]"
+PASS  hit-test #hintClose 可被点中   "use.[object.SVGAnimatedString]"
 PASS  初始 mainTime   "00:00:00"
 PASS  modalRoot 处于 display:none
 PASS  点击 开始滑雪
@@ -53,9 +53,16 @@ PASS  取消后数据仍在   1
 PASS  取消后弹窗关闭
 PASS  点击 计时标签
 PASS  二次进入后 #btnPrimary 仍可点中   "button#btnPrimary.btn.btn-primary"
-PASS  二次进入后 .tab[data-tab="settings"] 仍可点中   "span.tab-ico"
+PASS  二次进入后 .tab[data-tab="settings"] 仍可点中   "use.[object.SVGAnimatedString]"
 PASS  二次进入后 #chipWake 仍可点中   "button#chipWake.chip"
+PASS  趋势图已渲染   "最近 5 个滑雪日平均 31m，单日最长 49m"
+PASS  趋势图数据点数正确   6
+PASS  数据表可展开且有对应数据   6
+PASS  数据表 aria-expanded 同步   "true"
+PASS  分趟相对时长条数量与分趟数一致   "3 vs 3"
+PASS  分趟条宽度都是合法百分比   "100% 67% 83%"
+PASS  最长那一趟为 100%   "100% 67% 83%"
 
 页面级错误: (无)
 
-RESULT: PASS - 54 项通过
+RESULT: PASS - 61 项通过

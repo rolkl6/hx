@@ -1,5 +1,5 @@
 /* 滑雪计时 · Service Worker（离线缓存） */
-const VERSION = 'v1.0.1';
+const VERSION = 'v1.1.0';
 const CACHE = 'ski-timer-' + VERSION;
 
 const ASSETS = [

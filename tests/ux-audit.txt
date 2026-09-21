@@ -1,0 +1,41 @@
+=== UI/UX 量化审查 v2 ===
+URL  : http://127.0.0.1:8765/index.html
+设备 : iPhone 14 (390x664, WebKit)
+
+--- 各屏规模 ---
+  timer            文字  17 | 可交互  6 | emoji 0
+  records          文字  13 | 可交互  4 | emoji 0
+  settings         文字  15 | 可交互  9 | emoji 0
+  modal            文字  19 | 可交互 10 | emoji 0
+  recordsWithData  文字  35 | 可交互  5 | emoji 0
+
+========== 1. 对比度不达标（已计入渐变最差色标） ==========
+  (无)
+
+========== 2. 触控热区 < 44x44（已折算 label 包裹） ==========
+  (无)
+
+========== 3. 结构性 emoji ==========
+
+========== 4. 字号分布（全局去重） ==========
+     12px  x 1
+   12.5px  x28
+     13px  x19
+   13.5px  x 7
+     14px  x 3
+     15px  x 4
+     16px  x 7
+     17px  x 8
+     18px  x 1
+     19px  x 5
+     20px  x14
+   62.4px  x 2
+
+========== 5. 无障碍 ==========
+  无可访问名称的控件: 无
+  名称来源分布: {"aria-label":2,"文本内容":30,"包裹 label":2}
+
+========== 6. 布局 ==========
+  {"horizontalOverflow":false,"scrollWidth":390,"innerWidth":390,"tabbar":{"h":64,"bottom":664},"content":{"scrollH":731,"clientH":600},"lang":"zh-CN"}
+  records(有数据): {"horizontalOverflow":false,"scrollWidth":390,"innerWidth":390,"tabbar":{"h":64,"bottom":664},"content":{"scrollH":913,"clientH":600},"lang":"zh-CN"}
+  页面错误: 无

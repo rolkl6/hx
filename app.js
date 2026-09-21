@@ -9,7 +9,7 @@
   var LS_SESSIONS = 'ski.sessions.v1';
   var LS_SETTINGS = 'ski.settings.v1';
   var LS_HINT = 'ski.hint.v1';
-  var VERSION = '1.0.1';
+  var VERSION = '1.1.0';
   var STALE_MS = 18 * 60 * 60 * 1000; // 超过 18 小时未结束的会话会被询问
 
   /* ------------------------- 小工具 ------------------------- */
@@ -152,6 +152,43 @@
     return m;
   }
 
+  function maxOf(list) {
+    var m = 0;
+    for (var i = 0; i < list.length; i++) if (list[i] > m) m = list[i];
+    return m;
+  }
+
+  function avgOf(list) {
+    if (!list.length) return 0;
+    var t = 0;
+    for (var i = 0; i < list.length; i++) t += list[i];
+    return t / list.length;
+  }
+
+  /* 数值变化时才播一次 pop 动画。
+   * 注意：逐秒跳动的值（休息计时）不要用它，否则每秒弹一次会很吵。 */
+  function setStat(el, value) {
+    var next = String(value);
+    if (!el || el.textContent === next) return;
+    el.textContent = next;
+    el.classList.remove('pop');
+    void el.offsetWidth;
+    el.classList.add('pop');
+  }
+
+  function setText(el, value) {
+    if (el && el.textContent !== String(value)) el.textContent = String(value);
+  }
+
+  /* 状态切换时给 hero 一次轻微强调 */
+  function flashHero() {
+    var hero = $('hero');
+    if (!hero) return;
+    hero.classList.remove('flash');
+    void hero.offsetWidth;
+    hero.classList.add('flash');
+  }
+
   /* ------------------------- 声音反馈 ------------------------- */
 
   var audioCtx = null;
@@ -281,6 +318,7 @@
     persistActive();
     beep(880, 0.16);
     acquireWakeLock();
+    flashHero();
     renderAll();
     toast('开始计时 · 第 1 趟');
   }
@@ -295,6 +333,7 @@
     active.runStart = null;
     persistActive();
     beep(540, 0.15);
+    flashHero();
     renderAll();
     toast('第 ' + active.runs.length + ' 趟 · ' + fmtShort(ms));
   }
@@ -308,6 +347,7 @@
     active.restStart = null;
     persistActive();
     beep(880, 0.16);
+    flashHero();
     renderAll();
     toast('开始第 ' + (active.runs.length + 1) + ' 趟');
   }
@@ -383,7 +423,7 @@
       var pill = $('livePill');
       pill.textContent = '点下方按钮开始计时';
       pill.className = 'hero-pill';
-      $('statRuns').textContent = '0';
+      setStat($('statRuns'), '0');
       $('statLast').textContent = '--:--';
       $('statRest').textContent = '00:00';
       btnPrimary.textContent = '开始滑雪';
@@ -415,30 +455,50 @@
       btnPrimary.className = 'btn btn-rest';
     }
 
-    $('statRuns').textContent = String(active.runs.length);
-    $('statLast').textContent = active.runs.length ? fmtShort(active.runs[active.runs.length - 1].ms) : '--:--';
-    $('statRest').textContent = fmtShort(rest);
+    /* 趟数 / 上一趟用 setStat（变化时弹一下）；休息计时逐秒跳动，用 setText 避免每秒都弹 */
+    setStat($('statRuns'), active.runs.length);
+    setStat($('statLast'), active.runs.length ? fmtShort(active.runs[active.runs.length - 1].ms) : '--:--');
+    setText($('statRest'), fmtShort(rest));
   }
 
+  /* 只在分趟数或模式变化时重建列表：避免每次 renderAll 都重播入场动画。
+   * 进行中那一趟的时长与进度条由 tickLive() 单独更新。 */
+  var lastLiveSig = '';
+  var liveBarMax = 1;
+
   function renderLiveRuns() {
+    var sig = active ? active.mode + ':' + active.runs.length : 'idle';
+    if (sig === lastLiveSig) return;
+
     var list = $('liveRunList');
     var runs = active ? active.runs : [];
     var html = '';
 
+    var curMs = active && active.mode === 'skiing' ? currentRunMs(active, Date.now()) : 0;
+    var msList = [];
+    for (var k = 0; k < runs.length; k++) msList.push(runs[k].ms);
+    if (curMs) msList.push(curMs);
+    liveBarMax = maxOf(msList) || 1;
+
+    var justAdded = lastLiveSig !== '' && runs.length > parseInt(lastLiveSig.split(':')[1], 10);
+
     if (active && active.mode === 'skiing') {
       html += '<div class="run-item is-current">' +
         '<span class="run-idx">' + (runs.length + 1) + '</span>' +
-        '<span class="run-dur">' + fmtShort(currentRunMs(active, Date.now())) + '</span>' +
+        '<span class="run-dur">' + fmtShort(curMs) + '</span>' +
         '<span class="run-tag">进行中</span>' +
+        '<span class="run-bar" style="--w:' + Math.round(curMs / liveBarMax * 100) + '%"></span>' +
         '</div>';
     }
 
     for (var i = runs.length - 1; i >= 0; i--) {
       var r = runs[i];
-      html += '<div class="run-item">' +
+      var isNew = justAdded && i === runs.length - 1;
+      html += '<div class="run-item' + (isNew ? ' is-new' : '') + '">' +
         '<span class="run-idx">' + (i + 1) + '</span>' +
         '<span class="run-dur">' + fmtShort(r.ms) + '</span>' +
         '<span class="run-time">' + fmtTime(r.start) + ' – ' + fmtTime(r.end) + '</span>' +
+        '<span class="run-bar" style="--w:' + Math.round(r.ms / liveBarMax * 100) + '%"></span>' +
         '</div>';
     }
 
@@ -447,7 +507,8 @@
     }
 
     list.innerHTML = html;
-    $('runsCount').textContent = runs.length ? '共 ' + runs.length + ' 趟' : '';
+    setText($('runsCount'), runs.length ? '共 ' + runs.length + ' 趟' : '');
+    lastLiveSig = sig;
   }
 
   function tickLive() {
@@ -455,6 +516,183 @@
     renderTimer();
     var cur = document.querySelector('.run-item.is-current .run-dur');
     if (cur) cur.textContent = fmtShort(currentRunMs(active, Date.now()));
+    var curBar = document.querySelector('.run-item.is-current .run-bar');
+    if (curBar) curBar.style.setProperty('--w', Math.round(currentRunMs(active, Date.now()) / liveBarMax * 100) + '%');
+  }
+
+  /* ------------------------- 趋势图 -------------------------
+   * 依据 ui-ux-pro-max 数据集（charts.csv / "Trend Over Time"）：
+   *   - 折线 + 面积，填充约 20% 透明度
+   *   - 少于 4 个数据点不要画图，改用数字卡片（数据太少图表反而更难读）
+   *   - 数据量 <1000 点用 SVG
+   *   - 无障碍：必须有可见数据表 + 文字化趋势摘要；不能只靠颜色传达信息
+   */
+  var TREND_MAX_DAYS = 12;
+  var TREND_MIN_POINTS = 4;
+  var TREND_VB_W = 358;
+  var TREND_VB_H = 152;
+  var TREND_PAD = { l: 38, r: 12, t: 12, b: 24 };
+
+  function fmtAxis(ms) {
+    var t = Math.round(ms / 60000);
+    if (t >= 60) {
+      var h = Math.floor(t / 60), m = t % 60;
+      return m ? h + 'h' + pad2(m) : h + 'h';
+    }
+    return t + 'm';
+  }
+
+  function niceMax(v) {
+    var steps = [15, 30, 45, 60, 90, 120, 180, 240, 300, 360, 480, 600];
+    for (var i = 0; i < steps.length; i++) {
+      var ms = steps[i] * 60000;
+      if (v <= ms) return ms;
+    }
+    return Math.ceil(v / 3600000) * 3600000;
+  }
+
+  function shortDate(ts) {
+    var d = new Date(ts);
+    return (d.getMonth() + 1) + '/' + d.getDate();
+  }
+
+  /* 按天聚合：一天可能滑多次 */
+  function trendDays() {
+    var byDay = {};
+    sessions.forEach(function (s) {
+      var k = dateKey(s.startedAt);
+      if (!byDay[k]) byDay[k] = { key: k, ts: s.startedAt, ms: 0, runs: 0 };
+      byDay[k].ms += sessionSki(s);
+      byDay[k].runs += (s.runs || []).length;
+      if (s.startedAt < byDay[k].ts) byDay[k].ts = s.startedAt;
+    });
+    return Object.keys(byDay).sort().map(function (k) { return byDay[k]; });
+  }
+
+  function renderTrend() {
+    var section = $('trendSection');
+    if (!section) return;
+
+    var days = trendDays();
+    var sub = $('trendSub');
+    var sum = $('trendSummary');
+    var chart = $('trendChart');
+    var toggle = $('trendToggle');
+    var table = $('trendTable');
+
+    if (!days.length) { section.hidden = true; return; }
+    section.hidden = false;
+
+    if (days.length < TREND_MIN_POINTS) {
+      setText(sub, '');
+      sum.innerHTML = '已经记录 <b>' + days.length + '</b> 个滑雪日。再滑 <b>' +
+        (TREND_MIN_POINTS - days.length) + '</b> 天，这里会出现趋势图。';
+      chart.innerHTML = '';
+      toggle.hidden = true;
+      table.hidden = true;
+      return;
+    }
+
+    var shown = days.slice(-TREND_MAX_DAYS);
+    setText(sub, '最近 ' + shown.length + ' 个滑雪日');
+    toggle.hidden = false;
+
+    var values = shown.map(function (d) { return d.ms; });
+    var recent = values.slice(-5);
+    var prev = values.slice(-10, -5);
+    var recentAvg = avgOf(recent);
+    var peak = maxOf(values);
+
+    var html = '最近 <b>' + recent.length + '</b> 个滑雪日平均 <b>' + fmtHM(recentAvg) + '</b>';
+    var prevAvg = prev.length ? avgOf(prev) : 0;
+    if (prev.length >= 3 && prevAvg > 0) {
+      /* 样本太少时环比没有意义（1 天 vs 5 天的百分比会误导），改成报最大值 */
+      var diff = Math.round((recentAvg - prevAvg) / prevAvg * 100);
+      html += '，比之前 ' + prev.length + ' 天 <span class="' + (diff >= 0 ? 'up' : 'down') + '">' +
+        (diff >= 0 ? '+' : '') + diff + '%</span>';
+    } else {
+      html += '，单日最长 <b>' + fmtHM(peak) + '</b>';
+    }
+    sum.innerHTML = html;
+
+    /* ---- 几何：用固定 viewBox，宽度自适应 ---- */
+    var n = shown.length;
+    var maxV = niceMax(peak);
+    var innerW = TREND_VB_W - TREND_PAD.l - TREND_PAD.r;
+    var innerH = TREND_VB_H - TREND_PAD.t - TREND_PAD.b;
+    var baseY = TREND_PAD.t + innerH;
+
+    function px(i) { return n === 1 ? TREND_PAD.l + innerW / 2 : TREND_PAD.l + innerW * i / (n - 1); }
+    function py(v) { return TREND_PAD.t + innerH * (1 - v / maxV); }
+
+    var pts = [];
+    for (var i = 0; i < n; i++) pts.push([px(i), py(values[i])]);
+
+    var line = 'M' + pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' L');
+    var area = line + ' L' + pts[n - 1][0].toFixed(1) + ',' + baseY + ' L' + pts[0][0].toFixed(1) + ',' + baseY + ' Z';
+
+    var len = 0;
+    for (var j = 1; j < n; j++) {
+      var dx = pts[j][0] - pts[j - 1][0], dy = pts[j][1] - pts[j - 1][1];
+      len += Math.sqrt(dx * dx + dy * dy);
+    }
+    len = Math.ceil(len) + 12;
+
+    /* 网格线 + Y 轴刻度：0 / ½ / 满 */
+    var grid = '';
+    [0, 0.5, 1].forEach(function (f) {
+      var v = maxV * f;
+      var y = py(v).toFixed(1);
+      grid += '<line class="trend-grid" x1="' + TREND_PAD.l + '" y1="' + y + '" x2="' + (TREND_VB_W - TREND_PAD.r) + '" y2="' + y + '"' +
+        (f === 0 ? '' : ' stroke-dasharray="3 4"') + '/>';
+      grid += '<text class="trend-axis" x="' + (TREND_PAD.l - 6) + '" y="' + y + '" text-anchor="end" dominant-baseline="middle">' +
+        fmtAxis(v) + '</text>';
+    });
+
+    /* X 轴标签：≤8 个点全标，更多则取 5 个近似等距的位置（避免出现 0/2/3/5 这种不均匀间隔） */
+    var labelCount = n <= 8 ? n : 5;
+    var labelIdx = [];
+    for (var lc = 0; lc < labelCount; lc++) {
+      labelIdx.push(Math.round(lc * (n - 1) / (labelCount - 1)));
+    }
+    var seenL = {};
+    var xlabels = '';
+    labelIdx.forEach(function (k) {
+      if (seenL[k]) return;
+      seenL[k] = 1;
+      xlabels += '<text class="trend-axis" x="' + pts[k][0].toFixed(1) + '" y="' + (TREND_VB_H - 7) +
+        '" text-anchor="middle">' + shortDate(shown[k].ts) + '</text>';
+    });
+
+    var peakIdx = values.indexOf(peak);
+    var dots = '';
+    for (var m = 0; m < n; m++) {
+      dots += '<circle class="trend-dot' + (m === peakIdx ? ' is-peak' : '') + '" cx="' + pts[m][0].toFixed(1) +
+        '" cy="' + pts[m][1].toFixed(1) + '" r="' + (m === peakIdx ? 4 : 3) + '"/>';
+    }
+
+    var aria = '滑行时长趋势，最近 ' + n + ' 个滑雪日，从 ' + shortDate(shown[0].ts) + ' 的 ' +
+      fmtHM(values[0]) + ' 到 ' + shortDate(shown[n - 1].ts) + ' 的 ' + fmtHM(values[n - 1]) +
+      '，单日最长 ' + fmtHM(peak) + '。完整数值见下方数据表。';
+
+    chart.innerHTML =
+      '<svg viewBox="0 0 ' + TREND_VB_W + ' ' + TREND_VB_H + '" role="img" aria-label="' + aria + '">' +
+      '<defs><linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#38bdf8" stop-opacity="0.20"/>' +
+      '<stop offset="100%" stop-color="#38bdf8" stop-opacity="0.02"/>' +
+      '</linearGradient></defs>' +
+      grid + xlabels +
+      '<path class="trend-area" d="' + area + '"/>' +
+      '<path class="trend-line" style="--len:' + len + '" d="' + line + '"/>' +
+      dots +
+      '</svg>';
+
+    var rows = '';
+    for (var q = 0; q < n; q++) {
+      rows += '<tr><td>' + shortDate(shown[q].ts) + '</td><td>' + fmtHM(values[q]) + '</td><td>' + shown[q].runs + '</td></tr>';
+    }
+    table.innerHTML = '<table><caption class="sr-only">各滑雪日滑行时长</caption>' +
+      '<thead><tr><th>日期</th><th>滑行</th><th>趟数</th></tr></thead><tbody>' + rows + '</tbody></table>';
   }
 
   /* ------------------------- 渲染：记录页 ------------------------- */
@@ -476,16 +714,18 @@
       if (m > bestRun) bestRun = m;
     });
 
-    $('sumSki').textContent = totalSki ? fmtHM(totalSki) : '0';
-    $('sumRuns').textContent = String(totalRuns);
-    $('sumDays').textContent = String(Object.keys(days).length);
-    $('sumBest').textContent = bestRun ? fmtShort(bestRun) : '--';
+    setStat($('sumSki'), totalSki ? fmtHM(totalSki) : '0');
+    setStat($('sumRuns'), totalRuns);
+    setStat($('sumDays'), Object.keys(days).length);
+    setStat($('sumBest'), bestRun ? fmtShort(bestRun) : '--');
 
     var list = $('sessionList');
 
     if (!sessions.length) {
-      list.innerHTML = '<div class="empty">还没有历史记录<br><span>完成一次计时后会自动保存到这里</span></div>';
-      $('sessionsCount').textContent = '';
+      list.innerHTML = '<div class="empty">还没有历史记录<br><span>完成一次计时后会自动保存到这里</span><br>' +
+        '<button type="button" class="empty-cta" data-goto="timer">去开始第一次滑行</button></div>';
+      setText($('sessionsCount'), '');
+      renderTrend();
       return;
     }
 
@@ -495,7 +735,7 @@
     sorted.forEach(function (s) {
       var runs = s.runs || [];
       var ski = sessionSki(s);
-      var maxRun = sessionMaxRun(s);
+      var maxRun = sessionMaxRun(s) || 1;
 
       var body = '';
       if (runs.length) {
@@ -504,6 +744,7 @@
             '<span class="run-idx">' + (i + 1) + '</span>' +
             '<span class="run-dur">' + fmtShort(runs[i].ms) + '</span>' +
             '<span class="run-time">' + fmtTime(runs[i].start) + ' – ' + fmtTime(runs[i].end) + '</span>' +
+            '<span class="run-bar" style="--w:' + Math.round(runs[i].ms / maxRun * 100) + '%"></span>' +
             '</div>';
         }
       } else {
@@ -529,7 +770,8 @@
     });
 
     list.innerHTML = html;
-    $('sessionsCount').textContent = '共 ' + sessions.length + ' 次';
+    setText($('sessionsCount'), '共 ' + sessions.length + ' 次');
+    renderTrend();
   }
 
   /* ------------------------- 渲染：设置页 ------------------------- */
@@ -817,6 +1059,21 @@
       var f = this.files && this.files[0];
       this.value = '';
       if (f) importJSON(f);
+    });
+
+    /* 趋势图的数据表折叠（无障碍兜底：图表之外必须有可读的数值） */
+    $('trendToggle').addEventListener('click', function () {
+      var t = $('trendTable');
+      var willOpen = t.hidden;
+      t.hidden = !willOpen;
+      this.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      this.textContent = willOpen ? '收起数据表' : '查看数据表';
+    });
+
+    /* 空状态里的「去开始第一次滑行」 */
+    document.addEventListener('click', function (ev) {
+      var t = ev.target && ev.target.closest ? ev.target.closest('[data-goto]') : null;
+      if (t) switchTab(t.getAttribute('data-goto'));
     });
 
     /* 页面隐藏 / 关闭前落盘，避免 iOS 杀进程丢数据 */

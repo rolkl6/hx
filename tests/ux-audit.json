@@ -1,0 +1,1643 @@
+{
+ "url": "http://127.0.0.1:8765/index.html",
+ "audit": {
+  "timer": {
+   "screenId": "screen-timer",
+   "texts": [
+    {
+     "el": "span \"点底部「分享」→「添加到主屏幕」，即可全屏离\"",
+     "text": "点底部「分享」→「添加到主屏幕」，即可全屏离线使用",
+     "color": "rgb(191, 230, 255)",
+     "bg": "rgb(12,29,41)",
+     "size": 13.5,
+     "weight": 400,
+     "ratio": 13.08,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"滑雪计时\"",
+     "text": "滑雪计时",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(7,11,18)",
+     "size": 19,
+     "weight": 700,
+     "ratio": 17.5,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "button#chipWake.chip.is-on \"屏幕常亮 开\"",
+     "text": "屏幕常亮 开",
+     "color": "rgb(4, 18, 29)",
+     "bg": "rgb(14,165,233)",
+     "size": 13,
+     "weight": 600,
+     "ratio": 6.83,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "span#statusText \"准备就绪\"",
+     "text": "准备就绪",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(21,26,35)",
+     "size": 13.5,
+     "weight": 400,
+     "ratio": 6.79,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "div#mainTime.hero-time \"00:00:00\"",
+     "text": "00:00:00",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(21,26,35)",
+     "size": 62.4,
+     "weight": 700,
+     "ratio": 15.47,
+     "required": 3,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "div#mainLabel.hero-caption \"本次滑行总时长\"",
+     "text": "本次滑行总时长",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(21,26,35)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 6.79,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "div#livePill.hero-pill \"点下方按钮开始计时\"",
+     "text": "点下方按钮开始计时",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(37,42,50)",
+     "size": 15,
+     "weight": 600,
+     "ratio": 5.61,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "b#statRuns \"0\"",
+     "text": "0",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"已滑趟数\"",
+     "text": "已滑趟数",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#statLast \"--:--\"",
+     "text": "--:--",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"上一趟\"",
+     "text": "上一趟",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#statRest \"00:00\"",
+     "text": "00:00",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"休息合计\"",
+     "text": "休息合计",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "button#btnPrimary.btn.btn-primary \"开始滑雪\"",
+     "text": "开始滑雪",
+     "color": "rgb(4, 18, 29)",
+     "bg": "rgb(14,165,233)",
+     "size": 17,
+     "weight": 650,
+     "ratio": 6.83,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "div.section-title \"本次分趟\"",
+     "text": "本次分趟",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 13,
+     "weight": 600,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.empty \"还没有分趟记录开始滑行后，每按一次「结束这趟\"",
+     "text": "还没有分趟记录",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 14,
+     "weight": 400,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"开始滑行后，每按一次「结束这趟」就会记一笔\"",
+     "text": "开始滑行后，每按一次「结束这趟」就会记一笔",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    }
+   ],
+   "interactive": [
+    {
+     "el": "button#hintClose",
+     "targetEl": "button#hintClose",
+     "w": 44,
+     "h": 44,
+     "pass44": true,
+     "accName": "关闭提示",
+     "nameSource": "aria-label",
+     "fontSize": 13
+    },
+    {
+     "el": "button#chipWake.chip.is-on \"屏幕常亮 开\"",
+     "targetEl": "button#chipWake.chip.is-on \"屏幕常亮 开\"",
+     "w": 103,
+     "h": 45,
+     "pass44": true,
+     "accName": "屏幕常亮 开",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button#btnPrimary.btn.btn-primary \"开始滑雪\"",
+     "targetEl": "button#btnPrimary.btn.btn-primary \"开始滑雪\"",
+     "w": 358,
+     "h": 56,
+     "pass44": true,
+     "accName": "开始滑雪",
+     "nameSource": "文本内容",
+     "fontSize": 17
+    },
+    {
+     "el": "button.tab.is-active \"计时\"",
+     "targetEl": "button.tab.is-active \"计时\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "计时",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab \"记录\"",
+     "targetEl": "button.tab \"记录\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "记录",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab \"设置\"",
+     "targetEl": "button.tab \"设置\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "设置",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    }
+   ],
+   "emojiHits": [],
+   "other": {
+    "horizontalOverflow": false,
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "tabbar": {
+     "h": 64,
+     "bottom": 664
+    },
+    "content": {
+     "scrollH": 731,
+     "clientH": 600
+    },
+    "lang": "zh-CN"
+   }
+  },
+  "records": {
+   "screenId": "screen-records",
+   "texts": [
+    {
+     "el": "span \"历史记录\"",
+     "text": "历史记录",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(7,11,18)",
+     "size": 19,
+     "weight": 700,
+     "ratio": 17.5,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#sumSki \"0\"",
+     "text": "0",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"累计滑行\"",
+     "text": "累计滑行",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#sumRuns \"0\"",
+     "text": "0",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"累计趟数\"",
+     "text": "累计趟数",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#sumDays \"0\"",
+     "text": "0",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"滑雪天数\"",
+     "text": "滑雪天数",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#sumBest \"--\"",
+     "text": "--",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"最长一趟\"",
+     "text": "最长一趟",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.section-title \"全部记录\"",
+     "text": "全部记录",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 13,
+     "weight": 600,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.empty \"还没有历史记录完成一次计时后会自动保存到这里\"",
+     "text": "还没有历史记录",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 14,
+     "weight": 400,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"完成一次计时后会自动保存到这里\"",
+     "text": "完成一次计时后会自动保存到这里",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "button.empty-cta \"去开始第一次滑行\"",
+     "text": "去开始第一次滑行",
+     "color": "rgb(56, 189, 248)",
+     "bg": "rgb(7,11,18)",
+     "size": 14,
+     "weight": 600,
+     "ratio": 9.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    }
+   ],
+   "interactive": [
+    {
+     "el": "button.empty-cta \"去开始第一次滑行\"",
+     "targetEl": "button.empty-cta \"去开始第一次滑行\"",
+     "w": 140,
+     "h": 44,
+     "pass44": true,
+     "accName": "去开始第一次滑行",
+     "nameSource": "文本内容",
+     "fontSize": 14
+    },
+    {
+     "el": "button.tab \"计时\"",
+     "targetEl": "button.tab \"计时\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "计时",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab.is-active \"记录\"",
+     "targetEl": "button.tab.is-active \"记录\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "记录",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab \"设置\"",
+     "targetEl": "button.tab \"设置\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "设置",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    }
+   ],
+   "emojiHits": [],
+   "other": {
+    "horizontalOverflow": false,
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "tabbar": {
+     "h": 64,
+     "bottom": 664
+    },
+    "content": {
+     "scrollH": 600,
+     "clientH": 600
+    },
+    "lang": "zh-CN"
+   }
+  },
+  "settings": {
+   "screenId": "screen-settings",
+   "texts": [
+    {
+     "el": "span \"设置\"",
+     "text": "设置",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(7,11,18)",
+     "size": 19,
+     "weight": 700,
+     "ratio": 17.5,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.row-title \"屏幕常亮\"",
+     "text": "屏幕常亮",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(18,21,28)",
+     "size": 16,
+     "weight": 550,
+     "ratio": 16.17,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.row-sub \"滑行时尽量不让屏幕自动锁定（iOS 16.4\"",
+     "text": "滑行时尽量不让屏幕自动锁定（iOS 16.4+）",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(18,21,28)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.1,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.row-title \"提示音\"",
+     "text": "提示音",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(18,21,28)",
+     "size": 16,
+     "weight": 550,
+     "ratio": 16.17,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.row-sub \"开始 / 结束一趟时发出短提示音\"",
+     "text": "开始 / 结束一趟时发出短提示音",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(18,21,28)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.1,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.row-title \"导出 CSV 表格\"",
+     "text": "导出 CSV 表格",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(18,21,28)",
+     "size": 16,
+     "weight": 550,
+     "ratio": 16.17,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.row-sub \"可用 Excel / 备忘录打开\"",
+     "text": "可用 Excel / 备忘录打开",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(18,21,28)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.1,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.row-title \"导出 JSON 备份\"",
+     "text": "导出 JSON 备份",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(18,21,28)",
+     "size": 16,
+     "weight": 550,
+     "ratio": 16.17,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.row-sub \"完整数据，可换机恢复\"",
+     "text": "完整数据，可换机恢复",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(18,21,28)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.1,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.row-title \"导入 JSON 备份\"",
+     "text": "导入 JSON 备份",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(18,21,28)",
+     "size": 16,
+     "weight": 550,
+     "ratio": 16.17,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.row-sub \"与现有记录合并（自动去重）\"",
+     "text": "与现有记录合并（自动去重）",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(18,21,28)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.1,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.row-title \"清空全部数据\"",
+     "text": "清空全部数据",
+     "color": "rgb(252, 165, 165)",
+     "bg": "rgb(18,21,28)",
+     "size": 16,
+     "weight": 550,
+     "ratio": 9.6,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.row-sub \"删除本机所有滑雪记录\"",
+     "text": "删除本机所有滑雪记录",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(18,21,28)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.1,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "p.footnote \"所有数据只保存在这台手机的本机浏览器里，不会\"",
+     "text": "所有数据只保存在这台手机的本机浏览器里，不会上传到任何服务器",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.ver \"版本 v1.1.0\"",
+     "text": "版本 v1.1.0",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    }
+   ],
+   "interactive": [
+    {
+     "el": "input#setWake.switch",
+     "targetEl": "label.row \"屏幕常亮 滑行时尽量不让屏幕自动锁定（iOS\"",
+     "w": 356,
+     "h": 75,
+     "pass44": true,
+     "accName": "屏幕常亮 滑行时尽量不让屏幕自动锁定（iOS 16.4+）",
+     "nameSource": "包裹 label",
+     "fontSize": 13
+    },
+    {
+     "el": "input#setSound.switch",
+     "targetEl": "label.row \"提示音 开始 / 结束一趟时发出短提示音\"",
+     "w": 356,
+     "h": 74,
+     "pass44": true,
+     "accName": "提示音 开始 / 结束一趟时发出短提示音",
+     "nameSource": "包裹 label",
+     "fontSize": 13
+    },
+    {
+     "el": "button#btnExportCsv.row.row-btn \"导出 CSV 表格可用 Excel / 备忘\"",
+     "targetEl": "button#btnExportCsv.row.row-btn \"导出 CSV 表格可用 Excel / 备忘\"",
+     "w": 356,
+     "h": 70,
+     "pass44": true,
+     "accName": "导出 CSV 表格可用 Excel / 备忘录打开",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button#btnExportJson.row.row-btn \"导出 JSON 备份完整数据，可换机恢复\"",
+     "targetEl": "button#btnExportJson.row.row-btn \"导出 JSON 备份完整数据，可换机恢复\"",
+     "w": 356,
+     "h": 70,
+     "pass44": true,
+     "accName": "导出 JSON 备份完整数据，可换机恢复",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button#btnImportJson.row.row-btn \"导入 JSON 备份与现有记录合并（自动去重\"",
+     "targetEl": "button#btnImportJson.row.row-btn \"导入 JSON 备份与现有记录合并（自动去重\"",
+     "w": 356,
+     "h": 70,
+     "pass44": true,
+     "accName": "导入 JSON 备份与现有记录合并（自动去重）",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button#btnClearAll.row.row-btn \"清空全部数据删除本机所有滑雪记录\"",
+     "targetEl": "button#btnClearAll.row.row-btn \"清空全部数据删除本机所有滑雪记录\"",
+     "w": 356,
+     "h": 70,
+     "pass44": true,
+     "accName": "清空全部数据删除本机所有滑雪记录",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab \"计时\"",
+     "targetEl": "button.tab \"计时\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "计时",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab \"记录\"",
+     "targetEl": "button.tab \"记录\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "记录",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab.is-active \"设置\"",
+     "targetEl": "button.tab.is-active \"设置\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "设置",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    }
+   ],
+   "emojiHits": [],
+   "other": {
+    "horizontalOverflow": false,
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "tabbar": {
+     "h": 64,
+     "bottom": 664
+    },
+    "content": {
+     "scrollH": 704,
+     "clientH": 600
+    },
+    "lang": "zh-CN"
+   }
+  },
+  "modal": {
+   "screenId": "screen-timer",
+   "texts": [
+    {
+     "el": "span \"点底部「分享」→「添加到主屏幕」，即可全屏离\"",
+     "text": "点底部「分享」→「添加到主屏幕」，即可全屏离线使用",
+     "color": "rgb(191, 230, 255)",
+     "bg": "rgb(12,29,41)",
+     "size": 13.5,
+     "weight": 400,
+     "ratio": 13.08,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"滑雪计时\"",
+     "text": "滑雪计时",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(7,11,18)",
+     "size": 19,
+     "weight": 700,
+     "ratio": 17.5,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "button#chipWake.chip.is-on \"屏幕常亮 开\"",
+     "text": "屏幕常亮 开",
+     "color": "rgb(4, 18, 29)",
+     "bg": "rgb(14,165,233)",
+     "size": 13,
+     "weight": 600,
+     "ratio": 6.83,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "span#statusText \"滑行中 · 第 1 趟\"",
+     "text": "滑行中 · 第 1 趟",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(17,47,64)",
+     "size": 13.5,
+     "weight": 400,
+     "ratio": 5.47,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "div#mainTime.hero-time \"00:00:01\"",
+     "text": "00:00:01",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(17,47,64)",
+     "size": 62.4,
+     "weight": 700,
+     "ratio": 12.45,
+     "required": 3,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "div#mainLabel.hero-caption \"本次滑行总时长\"",
+     "text": "本次滑行总时长",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(17,47,64)",
+     "size": 13,
+     "weight": 400,
+     "ratio": 5.47,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "div#livePill.hero-pill.pill-ski \"本趟 00:01\"",
+     "text": "本趟 00:01",
+     "color": "rgb(154, 220, 255)",
+     "bg": "rgb(23,69,93)",
+     "size": 15,
+     "weight": 600,
+     "ratio": 6.83,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "b#statRuns \"0\"",
+     "text": "0",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"已滑趟数\"",
+     "text": "已滑趟数",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#statLast \"--:--\"",
+     "text": "--:--",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"上一趟\"",
+     "text": "上一趟",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#statRest \"00:00\"",
+     "text": "00:00",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"休息合计\"",
+     "text": "休息合计",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "button#btnPrimary.btn.btn-ski \"结束这趟 · 休息一下\"",
+     "text": "结束这趟 · 休息一下",
+     "color": "rgb(2, 18, 29)",
+     "bg": "rgb(2,132,199)",
+     "size": 17,
+     "weight": 650,
+     "ratio": 4.63,
+     "required": 4.5,
+     "pass": true,
+     "gradient": true
+    },
+    {
+     "el": "button#btnEnd.btn.btn-danger \"结束本次并保存\"",
+     "text": "结束本次并保存",
+     "color": "rgb(252, 165, 165)",
+     "bg": "rgb(31,21,28)",
+     "size": 15,
+     "weight": 600,
+     "ratio": 9.35,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.section-title \"本次分趟\"",
+     "text": "本次分趟",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 13,
+     "weight": 600,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-idx \"1\"",
+     "text": "1",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(31,45,56)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 5.48,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-dur \"00:01\"",
+     "text": "00:01",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(11,27,39)",
+     "size": 17,
+     "weight": 650,
+     "ratio": 15.53,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-tag \"进行中\"",
+     "text": "进行中",
+     "color": "rgb(56, 189, 248)",
+     "bg": "rgb(18,51,70)",
+     "size": 12,
+     "weight": 400,
+     "ratio": 6.15,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    }
+   ],
+   "interactive": [
+    {
+     "el": "button#hintClose",
+     "targetEl": "button#hintClose",
+     "w": 44,
+     "h": 44,
+     "pass44": true,
+     "accName": "关闭提示",
+     "nameSource": "aria-label",
+     "fontSize": 13
+    },
+    {
+     "el": "button#chipWake.chip.is-on \"屏幕常亮 开\"",
+     "targetEl": "button#chipWake.chip.is-on \"屏幕常亮 开\"",
+     "w": 103,
+     "h": 45,
+     "pass44": true,
+     "accName": "屏幕常亮 开",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button#btnPrimary.btn.btn-ski \"结束这趟 · 休息一下\"",
+     "targetEl": "button#btnPrimary.btn.btn-ski \"结束这趟 · 休息一下\"",
+     "w": 358,
+     "h": 56,
+     "pass44": true,
+     "accName": "结束这趟 · 休息一下",
+     "nameSource": "文本内容",
+     "fontSize": 17
+    },
+    {
+     "el": "button#btnEnd.btn.btn-danger \"结束本次并保存\"",
+     "targetEl": "button#btnEnd.btn.btn-danger \"结束本次并保存\"",
+     "w": 358,
+     "h": 50,
+     "pass44": true,
+     "accName": "结束本次并保存",
+     "nameSource": "文本内容",
+     "fontSize": 15
+    },
+    {
+     "el": "button.tab.is-active \"计时\"",
+     "targetEl": "button.tab.is-active \"计时\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "计时",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab \"记录\"",
+     "targetEl": "button.tab \"记录\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "记录",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab \"设置\"",
+     "targetEl": "button.tab \"设置\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "设置",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.btn.btn-ghost \"继续滑\"",
+     "targetEl": "button.btn.btn-ghost \"继续滑\"",
+     "w": 304,
+     "h": 58,
+     "pass44": true,
+     "accName": "继续滑",
+     "nameSource": "文本内容",
+     "fontSize": 17
+    },
+    {
+     "el": "button.btn.btn-primary \"结束并保存\"",
+     "targetEl": "button.btn.btn-primary \"结束并保存\"",
+     "w": 304,
+     "h": 56,
+     "pass44": true,
+     "accName": "结束并保存",
+     "nameSource": "文本内容",
+     "fontSize": 17
+    },
+    {
+     "el": "button.btn.btn-danger \"不保存，直接丢弃\"",
+     "targetEl": "button.btn.btn-danger \"不保存，直接丢弃\"",
+     "w": 304,
+     "h": 50,
+     "pass44": true,
+     "accName": "不保存，直接丢弃",
+     "nameSource": "文本内容",
+     "fontSize": 15
+    }
+   ],
+   "emojiHits": [],
+   "other": {
+    "horizontalOverflow": false,
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "tabbar": {
+     "h": 64,
+     "bottom": 664
+    },
+    "content": {
+     "scrollH": 746,
+     "clientH": 600
+    },
+    "lang": "zh-CN"
+   }
+  },
+  "recordsWithData": {
+   "screenId": "screen-records",
+   "texts": [
+    {
+     "el": "span \"历史记录\"",
+     "text": "历史记录",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(7,11,18)",
+     "size": 19,
+     "weight": 700,
+     "ratio": 17.5,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#sumSki.pop \"49m\"",
+     "text": "49m",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"累计滑行\"",
+     "text": "累计滑行",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#sumRuns.pop \"5\"",
+     "text": "5",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"累计趟数\"",
+     "text": "累计趟数",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#sumDays.pop \"1\"",
+     "text": "1",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"滑雪天数\"",
+     "text": "滑雪天数",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b#sumBest.pop \"14:00\"",
+     "text": "14:00",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(13,20,32)",
+     "size": 20,
+     "weight": 700,
+     "ratio": 16.38,
+     "required": 3,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span \"最长一趟\"",
+     "text": "最长一趟",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(13,20,32)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.2,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.section-title \"滑行趋势\"",
+     "text": "滑行趋势",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 13,
+     "weight": 600,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "p#trendSummary.trend-summary \"已经记录 1 个滑雪日。再滑 3 天，这里会\"",
+     "text": "已经记录",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(18,21,28)",
+     "size": 13.5,
+     "weight": 400,
+     "ratio": 7.1,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b \"1\"",
+     "text": "1",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(18,21,28)",
+     "size": 13.5,
+     "weight": 700,
+     "ratio": 16.17,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "b \"3\"",
+     "text": "3",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(18,21,28)",
+     "size": 13.5,
+     "weight": 700,
+     "ratio": 16.17,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.section-title \"全部记录 共 1 次\"",
+     "text": "全部记录",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 13,
+     "weight": 600,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span#sessionsCount.section-sub \"共 1 次\"",
+     "text": "共 1 次",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(7,11,18)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.68,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.s-date \"9月20日 周日\"",
+     "text": "9月20日 周日",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(18,21,28)",
+     "size": 16,
+     "weight": 650,
+     "ratio": 16.17,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.s-time \"11:18 – 13:18 · 休息 48m\"",
+     "text": "11:18 – 13:18 · 休息 48m",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(18,21,28)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.1,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.s-ski \"49m\"",
+     "text": "49m",
+     "color": "rgb(56, 189, 248)",
+     "bg": "rgb(18,21,28)",
+     "size": 18,
+     "weight": 700,
+     "ratio": 8.5,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "div.s-sub \"5 趟 · 最长 14:00\"",
+     "text": "5 趟 · 最长 14:00",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(18,21,28)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 7.1,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-idx \"1\"",
+     "text": "1",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(43,47,53)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 5.27,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-dur \"08:00\"",
+     "text": "08:00",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(25,28,35)",
+     "size": 17,
+     "weight": 650,
+     "ratio": 15.08,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-time \"11:18 – 11:26\"",
+     "text": "11:18 – 11:26",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(25,28,35)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 6.63,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-idx \"2\"",
+     "text": "2",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(43,47,53)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 5.27,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-dur \"11:00\"",
+     "text": "11:00",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(25,28,35)",
+     "size": 17,
+     "weight": 650,
+     "ratio": 15.08,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-time \"11:38 – 11:49\"",
+     "text": "11:38 – 11:49",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(25,28,35)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 6.63,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-idx \"3\"",
+     "text": "3",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(43,47,53)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 5.27,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-dur \"07:00\"",
+     "text": "07:00",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(25,28,35)",
+     "size": 17,
+     "weight": 650,
+     "ratio": 15.08,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-time \"11:58 – 12:05\"",
+     "text": "11:58 – 12:05",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(25,28,35)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 6.63,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-idx \"4\"",
+     "text": "4",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(43,47,53)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 5.27,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-dur \"14:00\"",
+     "text": "14:00",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(25,28,35)",
+     "size": 17,
+     "weight": 650,
+     "ratio": 15.08,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-time \"12:18 – 12:32\"",
+     "text": "12:18 – 12:32",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(25,28,35)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 6.63,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-idx \"5\"",
+     "text": "5",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(43,47,53)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 5.27,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-dur \"09:00\"",
+     "text": "09:00",
+     "color": "rgb(234, 242, 255)",
+     "bg": "rgb(25,28,35)",
+     "size": 17,
+     "weight": 650,
+     "ratio": 15.08,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "span.run-time \"12:38 – 12:47\"",
+     "text": "12:38 – 12:47",
+     "color": "rgb(147, 163, 186)",
+     "bg": "rgb(25,28,35)",
+     "size": 12.5,
+     "weight": 400,
+     "ratio": 6.63,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    },
+    {
+     "el": "button.btn.btn-danger \"删除这次记录\"",
+     "text": "删除这次记录",
+     "color": "rgb(252, 165, 165)",
+     "bg": "rgb(41,31,37)",
+     "size": 15,
+     "weight": 600,
+     "ratio": 8.44,
+     "required": 4.5,
+     "pass": true,
+     "gradient": false
+    }
+   ],
+   "interactive": [
+    {
+     "el": "summary \"9月20日 周日11:18 – 13:18 \"",
+     "targetEl": "summary \"9月20日 周日11:18 – 13:18 \"",
+     "w": 356,
+     "h": 74,
+     "pass44": true,
+     "accName": "9月20日 周日11:18 – 13:18 · 休息 48m49m5 趟 · 最长 14:00",
+     "nameSource": "文本内容",
+     "fontSize": 16
+    },
+    {
+     "el": "button.btn.btn-danger \"删除这次记录\"",
+     "targetEl": "button.btn.btn-danger \"删除这次记录\"",
+     "w": 332,
+     "h": 46,
+     "pass44": true,
+     "accName": "删除这次记录",
+     "nameSource": "文本内容",
+     "fontSize": 15
+    },
+    {
+     "el": "button.tab \"计时\"",
+     "targetEl": "button.tab \"计时\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "计时",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab.is-active \"记录\"",
+     "targetEl": "button.tab.is-active \"记录\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "记录",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    },
+    {
+     "el": "button.tab \"设置\"",
+     "targetEl": "button.tab \"设置\"",
+     "w": 130,
+     "h": 63,
+     "pass44": true,
+     "accName": "设置",
+     "nameSource": "文本内容",
+     "fontSize": 13
+    }
+   ],
+   "emojiHits": [],
+   "other": {
+    "horizontalOverflow": false,
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "tabbar": {
+     "h": 64,
+     "bottom": 664
+    },
+    "content": {
+     "scrollH": 913,
+     "clientH": 600
+    },
+    "lang": "zh-CN"
+   }
+  }
+ }
+}

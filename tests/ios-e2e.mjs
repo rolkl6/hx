@@ -15,7 +15,7 @@
  * 依赖：需要能解析到 playwright（在含 node_modules 的目录下运行，或复制过去）
  * ========================================================= */
 import { webkit, devices } from 'playwright';
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -49,6 +49,15 @@ await page.waitForTimeout(2000);
 const MIN = 60000;
 const advance = (ms) => page.evaluate((v) => { window.__t += v; }, ms);
 const text = (sel) => page.textContent(sel);
+
+const SHOTS = path.join(__dirname, 'shots');
+async function shot(name) {
+  try {
+    mkdirSync(SHOTS, { recursive: true });
+    await page.screenshot({ path: path.join(SHOTS, name + '.png') });
+    return true;
+  } catch (e) { return false; }
+}
 
 /* 所有点击都走这里：失败不抛异常，而是记一条带原因的 FAIL，
  * 这样即使界面完全点不动，也能拿到一份完整诊断报告。 */
@@ -117,6 +126,7 @@ for (const h of hits) {
 /* ---------- 1. 初始状态 ---------- */
 check('初始 mainTime', (await text('#mainTime')) === '00:00:00', await text('#mainTime'));
 check('modalRoot 处于 display:none', (await page.evaluate(() => getComputedStyle(document.getElementById('modalRoot')).display)) === 'none');
+await shot('01-timer-idle');
 
 /* ---------- 2. 真实点击「开始滑雪」 —— 这就是原来点不动的按钮 ---------- */
 await tap('#btnPrimary', '开始滑雪');
@@ -127,6 +137,7 @@ check('点击后进入滑行状态', (await text('#statusText')).includes('滑�
 await advance(10 * MIN);
 await page.waitForTimeout(500);
 check('滑行 10 分钟后主计时', (await text('#mainTime')) === '00:10:00', await text('#mainTime'));
+await shot('02-timer-skiing');
 
 await tap('#btnPrimary', '结束这趟');
 await page.waitForTimeout(400);
@@ -161,6 +172,7 @@ const modHits = await page.evaluate(() => {
   });
 });
 for (const m of modHits) check('弹窗按钮可点中: ' + m.label, m.ok === true);
+await shot('03-modal');
 
 await tapText('结束并保存');
 await page.waitForTimeout(600);
@@ -211,6 +223,85 @@ await tap('.tab[data-tab="timer"]', '计时标签');
 await page.waitForTimeout(400);
 const finalHits = await hitTest(['#btnPrimary', '.tab[data-tab="settings"]', '#chipWake']);
 for (const h of finalHits) check('二次进入后 ' + h.sel + ' 仍可点中', h.ok === true, h.top);
+
+/* ---------- 截图用：灌入 6 个滑雪日，验证趋势图 ---------- */
+await page.evaluate(() => {
+  const DAY = 86400000;
+  const base = Date.now() - 5 * DAY;
+  const plan = [[8, 11, 7, 14, 9], [6, 10, 12], [15, 9, 11, 8], [10, 13], [7, 9, 12, 6], [12, 8, 10]];
+  const sessions = plan.map((mins, d) => {
+    const t0 = base + d * DAY;
+    let cur = t0;
+    const runs = mins.map((m) => {
+      const r = { start: cur, end: cur + m * 60000, ms: m * 60000 };
+      cur += m * 60000 + 12 * 60000;
+      return r;
+    });
+    return {
+      id: 'SHOT-' + d, startedAt: t0, endedAt: cur, runs,
+      skiMs: mins.reduce((a, b) => a + b, 0) * 60000,
+      restMs: (runs.length - 1) * 12 * 60000,
+      maxRunMs: Math.max.apply(null, mins) * 60000, createdAt: t0
+    };
+  });
+  localStorage.setItem('ski.sessions.v1', JSON.stringify(sessions));
+});
+await page.reload({ waitUntil: 'load' });
+await page.waitForTimeout(1800);
+
+await page.click('.tab[data-tab="records"]');
+await page.waitForTimeout(1000);
+const trend = await page.evaluate(() => {
+  const s = document.getElementById('trendSection');
+  return {
+    visible: !s.hidden,
+    hasSvg: !!document.querySelector('#trendChart svg'),
+    hasLine: !!document.querySelector('#trendChart .trend-line'),
+    dots: document.querySelectorAll('#trendChart .trend-dot').length,
+    summary: document.getElementById('trendSummary').textContent,
+    sub: document.getElementById('trendSub').textContent
+  };
+});
+check('趋势图已渲染', trend.visible && trend.hasSvg && trend.hasLine, trend.summary);
+check('趋势图数据点数正确', trend.dots === 6, trend.dots);
+await shot('04-records-trend');
+
+/* 展开数据表（图表之外的可读数值，无障碍兜底） */
+await page.click('#trendToggle');
+await page.waitForTimeout(500);
+const tableRows = await page.evaluate(() => document.querySelectorAll('#trendTable tbody tr').length);
+check('数据表可展开且有对应数据', tableRows === 6, tableRows);
+const expanded = await page.evaluate(() => document.getElementById('trendToggle').getAttribute('aria-expanded'));
+check('数据表 aria-expanded 同步', expanded === 'true', expanded);
+await shot('05-records-table');
+
+await page.click('.tab[data-tab="settings"]');
+await page.waitForTimeout(600);
+await shot('06-settings');
+
+/* 展开一条记录，看分趟相对时长条 */
+await page.click('.tab[data-tab="records"]');
+await page.waitForTimeout(400);
+const bars = await page.evaluate(async () => {
+  const d = document.querySelector('#sessionList details.session');
+  d.open = true;
+  await new Promise((r) => setTimeout(r, 400));
+  const list = d.querySelectorAll('.run-bar');
+  return { widths: Array.from(list).map((b) => b.style.getPropertyValue('--w')), runs: d.querySelectorAll('.run-item').length };
+});
+check('分趟相对时长条数量与分趟数一致',
+  bars.widths.length === bars.runs && bars.widths.length >= 2, bars.widths.length + ' vs ' + bars.runs);
+check('分趟条宽度都是合法百分比',
+  bars.widths.every((w) => /^\d+%$/.test(w)), bars.widths.join(' '));
+check('最长那一趟为 100%', bars.widths.indexOf('100%') !== -1, bars.widths.join(' '));
+
+/* 滚到该记录再截图，否则展开的内容在视口外，截出来和上一张一模一样 */
+await page.evaluate(() => {
+  const d = document.querySelector('#sessionList details.session');
+  if (d) d.scrollIntoView({ block: 'start' });
+});
+await page.waitForTimeout(700);
+await shot('07-session-detail');
 
 /* ---------- 收尾 ---------- */
 await page.evaluate(() => {
