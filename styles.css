@@ -20,6 +20,14 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* hidden 属性必须永远压过布局用的 display 值。
+ * 否则 .modal-root 的 display:flex 会盖掉浏览器默认的 [hidden]{display:none}，
+ * 于是弹窗容器变成一层 position:fixed; inset:0; z-index:100 的透明遮罩，
+ * 吃掉页面上所有点击 —— 表现出来就是"按钮点了没反应"。 */
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   height: 100%;

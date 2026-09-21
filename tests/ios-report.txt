@@ -1,0 +1,61 @@
+=== iPhone(WebKit 真实触摸) E2E: http://127.0.0.1:8765/index.html ===
+UA: Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHT
+
+PASS  hit-test #btnPrimary 可被点中   "button#btnPrimary.btn.btn-primary"
+PASS  hit-test #chipWake 可被点中   "button#chipWake.chip.is-on"
+PASS  hit-test .tab[data-tab="timer"] 可被点中   "span.tab-ico"
+PASS  hit-test .tab[data-tab="records"] 可被点中   "span.tab-ico"
+PASS  hit-test .tab[data-tab="settings"] 可被点中   "span.tab-ico"
+PASS  hit-test #hintClose 可被点中   "button#hintClose"
+PASS  初始 mainTime   "00:00:00"
+PASS  modalRoot 处于 display:none
+PASS  点击 开始滑雪
+PASS  点击后进入滑行状态   "滑行中 · 第 1 趟"
+PASS  滑行 10 分钟后主计时   "00:10:00"
+PASS  点击 结束这趟
+PASS  结束一趟后趟数=1   "1"
+PASS  结束一趟后状态=休息中   "休息中"
+PASS  休息时滑行时长不变   "00:10:00"
+PASS  休息计时   "05:00"
+PASS  点击 开始下一趟
+PASS  两趟累计 30 分钟   "00:30:00"
+PASS  点击 结束本次
+PASS  弹窗出现
+PASS  弹窗标题   "结束本次滑雪？"
+PASS  弹窗按钮可点中: 继续滑
+PASS  弹窗按钮可点中: 结束并保存
+PASS  弹窗按钮可点中: 不保存，直接丢弃
+PASS  点击「结束并保存」
+PASS  保存后主计时归零   "00:00:00"
+PASS  保存后弹窗关闭
+PASS  会话已写入   1
+PASS  滑行时长=30分   1800000
+PASS  休息时长=5分   300000
+PASS  两趟明细正确
+PASS  点击 记录标签
+PASS  切到记录页   true
+PASS  记录页统计   "30m"
+PASS  历史卡片可点开   "div.s-date"
+PASS  点击 设置标签
+PASS  切到设置页   true
+PASS  设置项可点中 #setWake   "input#setWake.switch"
+PASS  设置项可点中 #setSound   "input#setSound.switch"
+PASS  设置项可点中 #btnExportCsv   "span.row-title"
+PASS  设置项可点中 #btnExportJson   "span.row-title"
+PASS  设置项可点中 #btnImportJson   "span.row-title"
+PASS  设置项可点中 #btnClearAll   "span.row-title"
+PASS  点击 屏幕常亮开关
+PASS  开关可切换   "true -> false"
+PASS  点击 清空全部数据
+PASS  清空确认弹窗出现   "清空全部数据？"
+PASS  点击「取消」
+PASS  取消后数据仍在   1
+PASS  取消后弹窗关闭
+PASS  点击 计时标签
+PASS  二次进入后 #btnPrimary 仍可点中   "button#btnPrimary.btn.btn-primary"
+PASS  二次进入后 .tab[data-tab="settings"] 仍可点中   "span.tab-ico"
+PASS  二次进入后 #chipWake 仍可点中   "button#chipWake.chip"
+
+页面级错误: (无)
+
+RESULT: PASS - 54 项通过

@@ -9,7 +9,7 @@
   var LS_SESSIONS = 'ski.sessions.v1';
   var LS_SETTINGS = 'ski.settings.v1';
   var LS_HINT = 'ski.hint.v1';
-  var VERSION = '1.0.0';
+  var VERSION = '1.0.1';
   var STALE_MS = 18 * 60 * 60 * 1000; // 超过 18 小时未结束的会话会被询问
 
   /* ------------------------- 小工具 ------------------------- */

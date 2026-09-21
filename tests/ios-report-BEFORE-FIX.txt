@@ -1,0 +1,58 @@
+=== iPhone(WebKit 真实触摸) E2E: https://rolkl6.github.io/hx/index.html ===
+UA: Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHT
+
+FAIL  hit-test #btnPrimary 可被点中   "div.modal-mask"
+FAIL  hit-test #chipWake 可被点中   "div.modal-mask"
+FAIL  hit-test .tab[data-tab="timer"] 可被点中   "div.modal-mask"
+FAIL  hit-test .tab[data-tab="records"] 可被点中   "div.modal-mask"
+FAIL  hit-test .tab[data-tab="settings"] 可被点中   "div.modal-mask"
+FAIL  hit-test #hintClose 可被点中   "div.modal-mask"
+PASS  初始 mainTime   "00:00:00"
+FAIL  modalRoot 处于 display:none
+FAIL  点击 开始滑雪   "- <div class=\"modal-mask\"></div> from <div hidden=\"\" id=\"modalRoot\" class=\"modal-root\">…</div> subtree intercepts pointer events"
+FAIL  点击后进入滑行状态   "准备就绪"
+FAIL  滑行 10 分钟后主计时   "00:00:00"
+FAIL  点击 结束这趟   "- <div class=\"modal-mask\"></div> from <div hidden=\"\" id=\"modalRoot\" class=\"modal-root\">…</div> subtree intercepts pointer events"
+FAIL  结束一趟后趟数=1   "0"
+FAIL  结束一趟后状态=休息中   "准备就绪"
+FAIL  休息时滑行时长不变   "00:00:00"
+FAIL  休息计时   "00:00"
+FAIL  点击 开始下一趟   "- <div class=\"modal-mask\"></div> from <div hidden=\"\" id=\"modalRoot\" class=\"modal-root\">…</div> subtree intercepts pointer events"
+FAIL  两趟累计 30 分钟   "00:00:00"
+FAIL  点击 结束本次   "page.click: Timeout 8000ms exceeded."
+PASS  弹窗出现
+FAIL  弹窗标题   ""
+FAIL  点击「结束并保存」   "locator.click: Timeout 8000ms exceeded."
+PASS  保存后主计时归零   "00:00:00"
+FAIL  保存后弹窗关闭
+FAIL  会话已写入   0
+FAIL  滑行时长=30分
+FAIL  休息时长=5分
+FAIL  两趟明细正确
+FAIL  点击 记录标签   "- <div class=\"modal-mask\"></div> from <div hidden=\"\" id=\"modalRoot\" class=\"modal-root\">…</div> subtree intercepts pointer events"
+FAIL  切到记录页   true
+FAIL  记录页统计   "0"
+FAIL  历史卡片可点开
+FAIL  点击 设置标签   "- <div class=\"modal-mask\"></div> from <div hidden=\"\" id=\"modalRoot\" class=\"modal-root\">…</div> subtree intercepts pointer events"
+FAIL  切到设置页   true
+FAIL  设置项可点中 #setWake   "div.modal-mask"
+FAIL  设置项可点中 #setSound   "div.modal-mask"
+FAIL  设置项可点中 #btnExportCsv   "div.modal-mask"
+FAIL  设置项可点中 #btnExportJson   "div.modal-mask"
+FAIL  设置项可点中 #btnImportJson   "div.modal-mask"
+FAIL  设置项可点中 #btnClearAll   "div.modal-mask"
+FAIL  点击 屏幕常亮开关   "page.click: Timeout 8000ms exceeded."
+FAIL  开关可切换   "true -> true"
+FAIL  点击 清空全部数据   "page.click: Timeout 8000ms exceeded."
+FAIL  清空确认弹窗出现   ""
+FAIL  点击「取消」   "locator.click: Timeout 8000ms exceeded."
+FAIL  取消后数据仍在   0
+FAIL  取消后弹窗关闭
+FAIL  点击 计时标签   "- <div class=\"modal-mask\"></div> from <div hidden=\"\" id=\"modalRoot\" class=\"modal-root\">…</div> subtree intercepts pointer events"
+FAIL  二次进入后 #btnPrimary 仍可点中   "div.modal-mask"
+FAIL  二次进入后 .tab[data-tab="settings"] 仍可点中   "div.modal-mask"
+FAIL  二次进入后 #chipWake 仍可点中   "div.modal-mask"
+
+页面级错误: (无)
+
+RESULT: FAIL - 48 项断言失败
