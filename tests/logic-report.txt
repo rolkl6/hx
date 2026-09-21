@@ -1,0 +1,73 @@
+PASS  初始 mainTime                       "00:00:00"
+PASS  初始 主按钮                            "开始滑雪"
+PASS  初始 结束按钮隐藏                         true
+PASS  初始 状态文案                           "准备就绪"
+PASS  初始 分趟空状态占位                        true
+PASS  初始 记录页空状态                         "0"
+PASS  初始 hero 模式                        "idle"
+PASS  定时器已注册                            1
+PASS  滑行中 mainTime                      "00:10:00"
+PASS  滑行中 状态文案                          "滑行中 · 第 1 趟"
+PASS  滑行中 本趟 pill                       "本趟 10:00"
+PASS  滑行中 主按钮                           "结束这趟 · 休息一下"
+PASS  滑行中 hero 模式                       "skiing"
+PASS  滑行中 结束按钮未隐藏                       false
+PASS  滑行中 列表显示进行中                       true
+PASS  active 已落盘                        true
+PASS  第1趟后 趟数                           "1"
+PASS  第1趟后 上一趟                          "10:00"
+PASS  第1趟后 mainTime                     "00:10:00"
+PASS  第1趟后 状态                           "休息中"
+PASS  第1趟后 hero 模式                      "resting"
+PASS  第1趟后 主按钮                          "开始下一趟"
+PASS  第1趟后 分趟计数                         "共 1 趟"
+PASS  休息中 mainTime 不变                   "00:10:00"
+PASS  休息中 休息合计                          "05:00"
+PASS  休息中 pill                          "休息 05:00"
+PASS  第2趟 mainTime 累计                   "00:30:00"
+PASS  第2趟 状态文案                          "滑行中 · 第 2 趟"
+PASS  第2趟 趟数仍为 1                        "1"
+PASS  弹窗标题                              "结束本次滑雪？"
+PASS  弹窗按钮                              ["继续滑","结束并保存","不保存，直接丢弃"]
+PASS  弹窗正文含趟数                           true
+PASS  找到「结束并保存」                         true
+PASS  保存后 mainTime 归零                   "00:00:00"
+PASS  保存后 趟数归零                          "0"
+PASS  保存后 结束按钮隐藏                        true
+PASS  保存后 active 已清除                    true
+PASS  存储 会话数                            1
+PASS  存储 滑行总时长                          1800000
+PASS  存储 休息总时长                          300000
+PASS  存储 各趟时长                           [600000,1200000]
+PASS  存储 最长一趟                           1200000
+PASS  记录页已激活                            true
+PASS  计时页已隐藏                            true
+PASS  统计 累计滑行                           "30m"
+PASS  统计 累计趟数                           "2"
+PASS  统计 滑雪天数                           "1"
+PASS  统计 最长一趟                           "20:00"
+PASS  记录卡片已渲染                           true
+PASS  记录计数文案                            "共 1 次"
+PASS  卡片含时段与休息                          true
+PASS  设置页已激活                            true
+PASS  屏幕常亮默认开                           true
+PASS  提示音默认开                            true
+PASS  关闭常亮后 chip 文案                     "屏幕常亮 关"
+PASS  设置已持久化                            true
+PASS  删除确认标题                            "删除这条记录？"
+PASS  删除后存储为空                           0
+PASS  删除后显示空状态                          true
+PASS  恢复 滑行总时长(12m+3m)                  "00:15:00"
+PASS  恢复 已完成趟数                          "1"
+PASS  恢复 状态文案                           "滑行中 · 第 2 趟"
+PASS  恢复 结束按钮可见                         false
+PASS  恢复 上一趟时长                          "12:00"
+PASS  恢复 未弹过期提示                         true
+PASS  陈旧会话 弹窗标题                         "发现一次没结束的计时"
+PASS  陈旧会话 按钮                           ["保存为记录","丢弃"]
+PASS  陈旧会话 已保存 1 条                      1
+PASS  陈旧会话 保存滑行时长                       1800000
+PASS  陈旧会话 休息计入                         72000000
+PASS  陈旧会话 active 已清除                   true
+
+RESULT: PASS - 71 项断言全部通过

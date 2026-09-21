@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <title>滑雪计时</title>
+  <meta name="description" content="记录滑雪时长、分趟与历史统计的离线小工具" />
+  <meta name="theme-color" content="#070b12" />
+  <meta name="color-scheme" content="dark" />
+
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="滑雪计时" />
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="app">
+  <main class="content" id="content">
+
+    <!-- ============ 计时 ============ -->
+    <section class="screen is-active" id="screen-timer">
+
+      <div class="hint" id="installHint" hidden>
+        <span>点底部「分享」→「添加到主屏幕」，即可全屏离线使用</span>
+        <button type="button" id="hintClose" aria-label="关闭">✕</button>
+      </div>
+
+      <header class="topbar">
+        <div class="brand"><span class="brand-ico">⛷️</span><span>滑雪计时</span></div>
+        <button type="button" class="chip" id="chipWake">屏幕常亮</button>
+      </header>
+
+      <div class="hero" id="hero" data-mode="idle">
+        <div class="hero-status"><span class="dot"></span><span id="statusText">准备就绪</span></div>
+        <div class="hero-time" id="mainTime">00:00:00</div>
+        <div class="hero-caption" id="mainLabel">本次滑行总时长</div>
+        <div class="hero-pill" id="livePill">点下方按钮开始计时</div>
+      </div>
+
+      <div class="mini-stats">
+        <div class="mini"><b id="statRuns">0</b><span>已滑趟数</span></div>
+        <div class="mini"><b id="statLast">--:--</b><span>上一趟</span></div>
+        <div class="mini"><b id="statRest">00:00</b><span>休息合计</span></div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btnPrimary">开始滑雪</button>
+        <button type="button" class="btn btn-danger" id="btnEnd" hidden>结束本次并保存</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">本次分趟 <span class="section-sub" id="runsCount"></span></div>
+        <div class="run-list" id="liveRunList"></div>
+      </div>
+    </section>
+
+    <!-- ============ 记录 ============ -->
+    <section class="screen" id="screen-records">
+      <header class="topbar"><div class="brand"><span class="brand-ico">📋</span><span>历史记录</span></div></header>
+
+      <div class="mini-stats mini-stats-4">
+        <div class="mini"><b id="sumSki">0</b><span>累计滑行</span></div>
+        <div class="mini"><b id="sumRuns">0</b><span>累计趟数</span></div>
+        <div class="mini"><b id="sumDays">0</b><span>滑雪天数</span></div>
+        <div class="mini"><b id="sumBest">--</b><span>最长一趟</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">全部记录 <span class="section-sub" id="sessionsCount"></span></div>
+        <div class="session-list" id="sessionList"></div>
+      </div>
+    </section>
+
+    <!-- ============ 设置 ============ -->
+    <section class="screen" id="screen-settings">
+      <header class="topbar"><div class="brand"><span class="brand-ico">⚙️</span><span>设置</span></div></header>
+
+      <div class="card">
+        <label class="row">
+          <div class="row-text">
+            <div class="row-title">屏幕常亮</div>
+            <div class="row-sub">滑行时尽量不让屏幕自动锁定（iOS 16.4+）</div>
+          </div>
+          <input type="checkbox" class="switch" id="setWake" />
+        </label>
+        <label class="row">
+          <div class="row-text">
+            <div class="row-title">提示音</div>
+            <div class="row-sub">开始 / 结束一趟时发出短提示音</div>
+          </div>
+          <input type="checkbox" class="switch" id="setSound" />
+        </label>
+      </div>
+
+      <div class="card">
+        <button type="button" class="row row-btn" id="btnExportCsv">
+          <span class="row-text"><span class="row-title">导出 CSV 表格</span><span class="row-sub">可用 Excel / 备忘录打开</span></span>
+          <span class="chev">›</span>
+        </button>
+        <button type="button" class="row row-btn" id="btnExportJson">
+          <span class="row-text"><span class="row-title">导出 JSON 备份</span><span class="row-sub">完整数据，可换机恢复</span></span>
+          <span class="chev">›</span>
+        </button>
+        <button type="button" class="row row-btn" id="btnImportJson">
+          <span class="row-text"><span class="row-title">导入 JSON 备份</span><span class="row-sub">与现有记录合并（自动去重）</span></span>
+          <span class="chev">›</span>
+        </button>
+        <button type="button" class="row row-btn is-danger" id="btnClearAll">
+          <span class="row-text"><span class="row-title">清空全部数据</span><span class="row-sub">删除本机所有滑雪记录</span></span>
+          <span class="chev">›</span>
+        </button>
+        <input type="file" id="fileImport" accept="application/json,.json" hidden />
+      </div>
+
+      <p class="footnote">
+        所有数据只保存在这台手机的本机浏览器里，不会上传到任何服务器。<br />
+        清理 Safari 数据或删除主屏幕图标会丢失记录，建议定期「导出 JSON 备份」。<br />
+        <span class="ver">版本 v1.0.0</span>
+      </p>
+    </section>
+
+  </main>
+
+  <nav class="tabbar" id="tabbar">
+    <button type="button" class="tab is-active" data-tab="timer"><span class="tab-ico">⏱</span><span>计时</span></button>
+    <button type="button" class="tab" data-tab="records"><span class="tab-ico">📋</span><span>记录</span></button>
+    <button type="button" class="tab" data-tab="settings"><span class="tab-ico">⚙️</span><span>设置</span></button>
+  </nav>
+</div>
+
+<div class="modal-root" id="modalRoot" hidden>
+  <div class="modal-mask"></div>
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <h3 class="modal-title" id="modalTitle"></h3>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>

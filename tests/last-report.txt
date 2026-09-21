@@ -1,0 +1,94 @@
+=== main flow ===
+idle.mainTime                  "00:00:00"
+idle.primary                   "开始滑雪"
+idle.endHidden                 true
+idle.emptyPlaceholder          true
+pwa.manifestHref               "manifest.json"
+pwa.manifestStatus             200
+pwa.manifestName               "滑雪计时"
+pwa.manifestDisplay            "standalone"
+pwa.manifestIcons              3
+pwa.appleTouchIcon             true
+pwa.themeColor                 "#070b12"
+pwa.swRegistered               true
+pwa.swScope                    "http://127.0.0.1:8765/"
+pwa.swActive                   true
+ski1.mainTime                  "00:10:00"
+ski1.status                    "滑行中 · 第 1 趟"
+ski1.pill                      "本趟 10:00"
+ski1.primary                   "结束这趟 · 休息一下"
+ski1.currentRunShown           true
+run1.statRuns                  "1"
+run1.statLast                  "10:00"
+run1.mainTime                  "00:10:00"
+run1.status                    "休息中"
+rest.mainTime                  "00:10:00"
+rest.statRest                  "05:00"
+rest.pill                      "休息 05:00"
+ski2.mainTime                  "00:30:00"
+modal.title                    "结束本次滑雪？"
+modal.buttons                  ["继续滑","结束并保存","不保存，直接丢弃"]
+saved.mainTime                 "00:00:00"
+saved.statRuns                 "0"
+saved.endHidden                true
+saved.activeCleared            true
+store.count                    1
+store.skiMs                    1800000
+store.restMs                   300000
+store.runMs                    [600000,1200000]
+records.active                 true
+records.sumSki                 "30m"
+records.sumRuns                "2"
+records.sumDays                "1"
+records.sumBest                "20:00"
+records.hasCard                true
+settings.active                true
+settings.wakeChecked           true
+settings.soundChecked          true
+
+=== session resume ===
+resume.endVisible              true
+resume.status                  "滑行中 · 第 3 趟"
+resume.statRuns                "2"
+resume.mainTime                "00:52:05"
+resume.statRest                "23:00"
+resume.pill                    "本趟 30:05"
+resume.primaryLabel            "结束这趟 · 休息一下"
+resume.staleModalShown         false
+
+=== offline reload (Service Worker) ===
+offline.title                  "滑雪计时"
+offline.appRendered            true
+offline.mainTime               "00:52:07"
+offline.status                 "滑行中 · 第 3 趟"
+offline.tabCount               3
+offline.bodyBg                 "rgb(7, 11, 18)"
+offline.heroRadius             "26px"
+
+=== resume assertions ===
+PASS  resume 会话已恢复(结束按钮可见)
+PASS  resume 状态=第3趟滑行中
+PASS  resume 已完成趟数=2
+PASS  resume 主按钮=结束这趟
+PASS  resume 滑行时长≈52分
+PASS  resume 休息时长=23分
+PASS  resume 本趟≈30分
+PASS  resume 未误报过期会话
+PASS  offline 页面标题正确
+PASS  offline 应用已渲染
+PASS  offline 底部标签栏完整
+PASS  offline 样式表已生效(深色背景)
+PASS  offline 样式表已生效(圆角 hero)
+PASS  offline 计时数据仍在
+
+=== page-level errors ===
+(none)
+
+=== screenshots ===
+01-timer-running.png
+02-records.png
+03-settings.png
+04-end-modal.png
+05-timer-resumed.png
+
+RESULT: PASS - no script errors
