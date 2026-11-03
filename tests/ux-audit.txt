@@ -1,5 +1,5 @@
 === UI/UX 量化审查 v2 ===
-URL  : http://127.0.0.1:8765/index.html
+URL  : https://rolkl6.github.io/hx/index.html
 设备 : iPhone 14 (390x664, WebKit)
 
 --- 各屏规模 ---
