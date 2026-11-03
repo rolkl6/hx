@@ -15,7 +15,7 @@ PASS  滑行中 结束按钮未隐藏                       false
 PASS  滑行中 列表显示进行中                       true
 PASS  active 已落盘                        true
 PASS  第1趟后 趟数                           "1"
-PASS  第1趟后 上一趟                          "10:00"
+PASS  第1趟后 最高时速(尚未有GPS)                 "--"
 PASS  第1趟后 mainTime                     "00:10:00"
 PASS  第1趟后 状态                           "休息中"
 PASS  第1趟后 hero 模式                      "resting"
@@ -61,7 +61,7 @@ PASS  恢复 滑行总时长(12m+3m)                  "00:15:00"
 PASS  恢复 已完成趟数                          "1"
 PASS  恢复 状态文案                           "滑行中 · 第 2 趟"
 PASS  恢复 结束按钮可见                         false
-PASS  恢复 上一趟时长                          "12:00"
+PASS  恢复 最高时速(尚未有GPS)                   "--"
 PASS  恢复 未弹过期提示                         true
 PASS  陈旧会话 弹窗标题                         "发现一次没结束的计时"
 PASS  陈旧会话 按钮                           ["保存为记录","丢弃"]
@@ -69,5 +69,23 @@ PASS  陈旧会话 已保存 1 条                      1
 PASS  陈旧会话 保存滑行时长                       1800000
 PASS  陈旧会话 休息计入                         72000000
 PASS  陈旧会话 active 已清除                   true
+PASS  测速 已启动定位监听                        1
+PASS  测速 请求高精度定位                        true
+PASS  测速 初始显示定位中                        "定位中…"
+PASS  测速 初始最高时速为空                       "--"
+PASS  测速 当前时速显示                         "45 km/h"
+PASS  测速 最高时速统计                         "45 km/h"
+PASS  测速 单点跳点被丢弃                        "45 km/h"
+PASS  测速 低精度样本被丢弃                       "45 km/h"
+PASS  测速 持续高速才更新最高值                     "60 km/h"
+PASS  测速 本趟记录最高时速                       60
+PASS  测速 会话记录最高时速                       60
+PASS  测速 结束后已停止定位监听                     true
+PASS  测速 无 speed 字段时用位移差分               36
+PASS  测速 拒绝授权时给出明确文案                    "未授权定位"
+PASS  测速 拒绝授权后最高时速为空                    "--"
+PASS  测速 关闭开关后停止监听                      true
+PASS  测速 关闭开关已持久化                       false
+PASS  测速 关闭后时速药丸隐藏                      true
 
-RESULT: PASS - 71 项断言全部通过
+RESULT: PASS - 89 项断言全部通过

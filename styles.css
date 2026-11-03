@@ -269,10 +269,17 @@ body::before {
   letter-spacing: 0.4px;
 }
 
-/* 本趟/休息是"此刻"的指标，权重高于累计统计 */
+/* 本趟/休息/时速是"此刻"的指标，权重高于累计统计 */
+.hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
 .hero-pill {
   display: inline-block;
-  margin-top: 14px;
   padding: 8px 18px;
   border-radius: 999px;
   font-size: 15px;
@@ -281,10 +288,20 @@ body::before {
   background: rgba(255, 255, 255, 0.07);
   color: var(--muted);
   transition: background var(--t-base), color var(--t-base);
+  white-space: nowrap;
 }
 
 .hero-pill.pill-ski { background: rgba(56, 189, 248, 0.16); color: #9adcff; }
 .hero-pill.pill-rest { background: rgba(251, 191, 36, 0.16); color: #ffd98a; }
+
+/* 当前时速：用速度感的青绿色，与滑行蓝区分开 */
+.hero-pill.pill-speed {
+  background: rgba(45, 212, 191, 0.16);
+  color: #7fe9dc;
+}
+
+.hero-pill.pill-speed.is-idle { background: rgba(255, 255, 255, 0.07); color: var(--muted); }
+.hero-pill.pill-speed.is-blocked { background: rgba(248, 113, 113, 0.14); color: #fca5a5; }
 
 /* ---------- 统计条 ----------
  * 由"三张独立卡片"改为"一条发丝线分隔的组"：
@@ -302,6 +319,7 @@ body::before {
 }
 
 .stat-strip.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.stat-strip.cols-3 { grid-template-columns: repeat(3, 1fr); }
 
 .stat {
   background: var(--bg-2);
@@ -462,6 +480,25 @@ body::before {
   font-weight: 650;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.2px;
+}
+
+/* 时长 + 该趟最高时速 并排，右侧留时间区间 */
+.run-main {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.run-main .run-dur { flex: 0 0 auto; }
+
+.run-speed {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #7fe9dc;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .run-time {
@@ -899,6 +936,11 @@ body::before {
   text-align: center;
   box-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.9);
   pointer-events: none;
+}
+
+/* 安装提示条可见时把 toast 往下让开，避免两层叠在一起（截图里实测到） */
+body.has-hint .toast {
+  top: calc(env(safe-area-inset-top, 0px) + 84px);
 }
 
 .toast.show { opacity: 1; transform: translate(-50%, 0); }

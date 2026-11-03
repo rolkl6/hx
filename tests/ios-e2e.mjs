@@ -43,6 +43,28 @@ await page.addInitScript(() => {
   Date.now = () => window.__t;
 });
 
+/* 定位桩：在 app.js 之前替换 navigator.geolocation，
+ * 这样可以确定性地喂入速度样本，验证真实引擎里的滤波与显示 */
+await page.addInitScript(() => {
+  const st = { ok: null, err: null, id: 0 };
+  window.__geo = {
+    feed(lat, lon, speed, accuracy, ts) {
+      if (st.ok) st.ok({ coords: { latitude: lat, longitude: lon, speed, accuracy }, timestamp: ts });
+    },
+    fail(code) { if (st.err) st.err({ code }); },
+    watching() { return !!st.ok; }
+  };
+  try {
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: {
+        watchPosition(okCb, errCb) { st.ok = okCb; st.err = errCb; return ++st.id; },
+        clearWatch() { st.ok = null; }
+      }
+    });
+  } catch (e) { /* ignore */ }
+});
+
 await page.goto(URL, { waitUntil: 'load', timeout: 60000 });
 await page.waitForTimeout(2000);
 
@@ -133,6 +155,37 @@ await tap('#btnPrimary', '开始滑雪');
 await page.waitForTimeout(400);
 check('点击后进入滑行状态', (await text('#statusText')).includes('滑行中'), await text('#statusText'));
 
+/* ---------- 2b. GPS 测速（真实引擎 + 可控定位样本） ---------- */
+check('测速 启动后请求定位', await page.evaluate(() => window.__geo.watching()) === true);
+check('测速 初始显示定位中', (await text('#liveSpeed')) === '定位中…', await text('#liveSpeed'));
+
+const feedSpeeds = async (mpsList, acc) => {
+  await page.evaluate(({ list, accuracy }) => {
+    let ts = 1700000000000;
+    list.forEach((mps) => {
+      window.__geo.feed(30.0, 120.0, mps, accuracy === undefined ? 5 : accuracy, ts);
+      ts += 1000;
+    });
+  }, { list: mpsList, accuracy: acc });
+  await page.waitForTimeout(200);
+};
+
+/* 稳定 45km/h */
+await feedSpeeds([12.5, 12.5, 12.5]);
+check('测速 当前时速显示', (await text('#liveSpeed')) === '45 km/h', await text('#liveSpeed'));
+check('测速 最高时速统计', (await text('#statMax')) === '45 km/h', await text('#statMax'));
+await shot('02b-timer-speed');
+
+/* 单个 150km/h 跳点 + 精度 50m 的样本都应被丢弃 */
+await feedSpeeds([41.67]);
+check('测速 单点跳点被丢弃', (await text('#statMax')) === '45 km/h', await text('#statMax'));
+await feedSpeeds([16.67], 50);
+check('测速 低精度样本被丢弃', (await text('#statMax')) === '45 km/h', await text('#statMax'));
+
+/* 持续 60km/h 才更新最高值 */
+await feedSpeeds([16.67, 16.67, 16.67, 16.67, 16.67]);
+check('测速 持续高速才更新最高值', (await text('#statMax')) === '60 km/h', await text('#statMax'));
+
 /* ---------- 3. 滑 10 分钟 → 结束这趟 ---------- */
 await advance(10 * MIN);
 await page.waitForTimeout(500);
@@ -184,12 +237,16 @@ check('会话已写入', stored.length === 1, stored.length);
 check('滑行时长=30分', stored[0] && stored[0].skiMs === 30 * MIN, stored[0] && stored[0].skiMs);
 check('休息时长=5分', stored[0] && stored[0].restMs === 5 * MIN, stored[0] && stored[0].restMs);
 check('两趟明细正确', stored[0] && JSON.stringify(stored[0].runs.map((r) => r.ms)) === JSON.stringify([10 * MIN, 20 * MIN]));
+check('测速 会话记录最高时速', stored[0] && Math.round(stored[0].maxSpeed) === 60, stored[0] && stored[0].maxSpeed);
+check('测速 第一趟记录最高时速', stored[0] && Math.round(stored[0].runs[0].maxSpeed) === 60, stored[0] && stored[0].runs[0].maxSpeed);
+check('测速 保存后停止定位监听', await page.evaluate(() => window.__geo.watching()) === false);
 
 /* ---------- 7. 真实点击切换标签页 ---------- */
 await tap('.tab[data-tab="records"]', '记录标签');
 await page.waitForTimeout(400);
 check('切到记录页', await page.isVisible('#screen-records'), true);
 check('记录页统计', (await text('#sumSki')) === '30m', await text('#sumSki'));
+check('记录页最高时速', (await text('#sumMax')) === '60 km/h', await text('#sumMax'));
 
 const recHits = await hitTest(['#sessionList details.session summary']);
 check('历史卡片可点开', recHits[0] && recHits[0].ok === true, recHits[0] && recHits[0].top);
@@ -224,16 +281,17 @@ await page.waitForTimeout(400);
 const finalHits = await hitTest(['#btnPrimary', '.tab[data-tab="settings"]', '#chipWake']);
 for (const h of finalHits) check('二次进入后 ' + h.sel + ' 仍可点中', h.ok === true, h.top);
 
-/* ---------- 截图用：灌入 6 个滑雪日，验证趋势图 ---------- */
+/* ---------- 截图用：灌入 6 个滑雪日（含各趟最高时速），验证趋势图与测速展示 ---------- */
 await page.evaluate(() => {
   const DAY = 86400000;
   const base = Date.now() - 5 * DAY;
   const plan = [[8, 11, 7, 14, 9], [6, 10, 12], [15, 9, 11, 8], [10, 13], [7, 9, 12, 6], [12, 8, 10]];
+  const speeds = [[41, 47, 39, 52, 44], [36, 41, 45], [55, 48, 51, 43], [38, 42], [40, 46, 44, 37], [49, 43, 46]];
   const sessions = plan.map((mins, d) => {
     const t0 = base + d * DAY;
     let cur = t0;
-    const runs = mins.map((m) => {
-      const r = { start: cur, end: cur + m * 60000, ms: m * 60000 };
+    const runs = mins.map((m, i) => {
+      const r = { start: cur, end: cur + m * 60000, ms: m * 60000, maxSpeed: speeds[d][i] };
       cur += m * 60000 + 12 * 60000;
       return r;
     });
@@ -241,7 +299,9 @@ await page.evaluate(() => {
       id: 'SHOT-' + d, startedAt: t0, endedAt: cur, runs,
       skiMs: mins.reduce((a, b) => a + b, 0) * 60000,
       restMs: (runs.length - 1) * 12 * 60000,
-      maxRunMs: Math.max.apply(null, mins) * 60000, createdAt: t0
+      maxRunMs: Math.max.apply(null, mins) * 60000,
+      maxSpeed: Math.max.apply(null, speeds[d]),
+      createdAt: t0
     };
   });
   localStorage.setItem('ski.sessions.v1', JSON.stringify(sessions));
@@ -251,6 +311,7 @@ await page.waitForTimeout(1800);
 
 await page.click('.tab[data-tab="records"]');
 await page.waitForTimeout(1000);
+check('记录页汇总最高时速', (await text('#sumMax')) === '55 km/h', await text('#sumMax'));
 const trend = await page.evaluate(() => {
   const s = document.getElementById('trendSection');
   return {

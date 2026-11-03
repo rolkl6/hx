@@ -147,11 +147,39 @@ function createApp(opts = {}) {
   };
 
   const windowListeners = {};
+
+  /* 可编程的定位桩：手动喂入坐标，用来测滤波与最高时速逻辑 */
+  const geo = {
+    ok: null,
+    err: null,
+    opts: null,
+    watchCount: 0,
+    cleared: 0,
+    watchPosition(okCb, errCb, opts) {
+      geo.ok = okCb;
+      geo.err = errCb;
+      geo.opts = opts;
+      return ++geo.watchCount;
+    },
+    clearWatch() { geo.cleared++; geo.ok = null; },
+    /* 喂一个定位：speedMps 不传则走位移差分 */
+    fix(lat, lon, speedMps, accuracy, ts) {
+      if (!geo.ok) return false;
+      geo.ok({
+        coords: { latitude: lat, longitude: lon, accuracy: accuracy === undefined ? 5 : accuracy, speed: speedMps },
+        timestamp: ts
+      });
+      return true;
+    },
+    fail(code) { if (geo.err) geo.err({ code }); }
+  };
+
   const window = {
     navigator: {
       userAgent: 'node-test',
       platform: 'test',
-      maxTouchPoints: 0
+      maxTouchPoints: 0,
+      geolocation: geo
     },
     document,
     matchMedia: () => ({ matches: false, addEventListener() {} }),
@@ -211,6 +239,7 @@ function createApp(opts = {}) {
     clock,
     timers,
     window,
+    geo,
     windowListeners,
     modalBtns: () => getEl('modalActions').children,
     modalBtn: (label) => getEl('modalActions').children.find((b) => b.textContent === label),
@@ -266,7 +295,7 @@ app.el('btnPrimary').click();
 await tick();
 
 eq('第1趟后 趟数', app.el('statRuns').textContent, '1');
-eq('第1趟后 上一趟', app.el('statLast').textContent, '10:00');
+eq('第1趟后 最高时速(尚未有GPS)', app.el('statMax').textContent, '--');
 eq('第1趟后 mainTime', app.el('mainTime').textContent, '00:10:00');
 eq('第1趟后 状态', app.el('statusText').textContent, '休息中');
 eq('第1趟后 hero 模式', app.el('hero').dataset.mode, 'resting');
@@ -380,7 +409,7 @@ eq('恢复 滑行总时长(12m+3m)', app2.el('mainTime').textContent, '00:15:00'
 eq('恢复 已完成趟数', app2.el('statRuns').textContent, '1');
 eq('恢复 状态文案', app2.el('statusText').textContent, '滑行中 · 第 2 趟');
 eq('恢复 结束按钮可见', app2.el('btnEnd').hidden, false);
-eq('恢复 上一趟时长', app2.el('statLast').textContent, '12:00');
+eq('恢复 最高时速(尚未有GPS)', app2.el('statMax').textContent, '--');
 truthy('恢复 未弹过期提示', app2.el('modalRoot').hidden === true);
 
 /* ===== 11. 超过 18 小时的陈旧会话会询问 ===== */
@@ -408,6 +437,83 @@ eq('陈旧会话 已保存 1 条', staleSessions.length, 1);
 eq('陈旧会话 保存滑行时长', staleSessions[0].skiMs, 30 * MIN);
 eq('陈旧会话 休息计入', staleSessions[0].restMs, 20 * 60 * MIN);
 eq('陈旧会话 active 已清除', staleStore.get('ski.active.v1') === undefined, true);
+
+/* ===== 12. GPS 测速与最高时速 ===== */
+const geoStore = new Map();
+const g = createApp({ store: geoStore });
+
+g.el('btnPrimary').click();
+await tick();
+eq('测速 已启动定位监听', g.geo.watchCount, 1);
+eq('测速 请求高精度定位', g.geo.opts && g.geo.opts.enableHighAccuracy, true);
+eq('测速 初始显示定位中', g.el('liveSpeed').textContent, '定位中…');
+eq('测速 初始最高时速为空', g.el('statMax').textContent, '--');
+
+let gts = 1700000000000;
+const feed = (mps, acc) => { g.geo.fix(30.0, 120.0, mps, acc === undefined ? 5 : acc, gts); gts += 1000; };
+
+/* 稳定 45km/h（12.5 m/s）三个样本 */
+feed(12.5); feed(12.5); feed(12.5);
+eq('测速 当前时速显示', g.el('liveSpeed').textContent, '45 km/h');
+eq('测速 最高时速统计', g.el('statMax').textContent, '45 km/h');
+
+/* 单个 150km/h 跳点必须被丢弃，不能变成纪录 */
+feed(41.67);
+eq('测速 单点跳点被丢弃', g.el('statMax').textContent, '45 km/h');
+
+/* 精度 50m 的样本必须被丢弃 */
+feed(60 / 3.6, 50);
+eq('测速 低精度样本被丢弃', g.el('statMax').textContent, '45 km/h');
+
+/* 稳定 60km/h 持续五个样本 → 最高值应更新 */
+feed(60 / 3.6); feed(60 / 3.6); feed(60 / 3.6); feed(60 / 3.6); feed(60 / 3.6);
+eq('测速 持续高速才更新最高值', g.el('statMax').textContent, '60 km/h');
+
+/* 结束这趟 → 该趟应带上自己的最高时速 */
+g.el('btnPrimary').click();
+await tick();
+const gActive = JSON.parse(geoStore.get('ski.active.v1'));
+eq('测速 本趟记录最高时速', Math.round(gActive.runs[0].maxSpeed), 60);
+
+/* 保存后会话带上最高时速，且停止定位 */
+g.el('btnEnd').click();
+await tick();
+g.modalBtn('结束并保存').click();
+await tick();
+const gSaved = JSON.parse(geoStore.get('ski.sessions.v1'));
+eq('测速 会话记录最高时速', Math.round(gSaved[0].maxSpeed), 60);
+truthy('测速 结束后已停止定位监听', g.geo.cleared >= 1);
+
+/* 没有 speed 字段时退化为位移差分：100m / 10s ≈ 36km/h */
+const g2 = createApp({ store: new Map() });
+g2.el('btnPrimary').click();
+await tick();
+g2.geo.fix(30.0, 120.0, undefined, 5, 1000);
+g2.geo.fix(30.0009, 120.0, undefined, 5, 11000);
+eq('测速 无 speed 字段时用位移差分', parseInt(g2.el('liveSpeed').textContent, 10), 36);
+
+/* 拒绝授权 */
+const g3 = createApp({ store: new Map() });
+g3.el('btnPrimary').click();
+await tick();
+g3.geo.fail(1);
+eq('测速 拒绝授权时给出明确文案', g3.el('liveSpeed').textContent, '未授权定位');
+eq('测速 拒绝授权后最高时速为空', g3.el('statMax').textContent, '--');
+
+/* 关闭测速开关 → 停止定位并持久化 */
+const g4Store = new Map();
+const g4 = createApp({ store: g4Store });
+g4.el('btnPrimary').click();
+await tick();
+const clearedBefore = g4.geo.cleared;
+g4.tabs.find((t) => t.getAttribute('data-tab') === 'settings').click();
+await tick();
+g4.el('setSpeed').checked = false;
+g4.el('setSpeed').dispatch('change');
+await tick();
+truthy('测速 关闭开关后停止监听', g4.geo.cleared > clearedBefore);
+eq('测速 关闭开关已持久化', JSON.parse(g4Store.get('ski.settings.v1')).speed, false);
+truthy('测速 关闭后时速药丸隐藏', g4.el('liveSpeed').hidden === true);
 
 /* ------------------------- 输出 ------------------------- */
 const report = results.join('\n') +

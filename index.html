@@ -80,12 +80,15 @@
         <div class="hero-status"><span class="dot"></span><span id="statusText">准备就绪</span></div>
         <div class="hero-time" id="mainTime">00:00:00</div>
         <div class="hero-caption" id="mainLabel">本次滑行总时长</div>
-        <div class="hero-pill" id="livePill">点下方按钮开始计时</div>
+        <div class="hero-pills">
+          <div class="hero-pill" id="livePill">点下方按钮开始计时</div>
+          <div class="hero-pill pill-speed" id="liveSpeed" hidden>-- km/h</div>
+        </div>
       </div>
 
       <div class="stat-strip" id="timerStats">
         <div class="stat"><b id="statRuns">0</b><span>已滑趟数</span></div>
-        <div class="stat"><b id="statLast">--:--</b><span>上一趟</span></div>
+        <div class="stat"><b id="statMax">--</b><span>最高时速</span></div>
         <div class="stat"><b id="statRest">00:00</b><span>休息合计</span></div>
       </div>
 
@@ -109,11 +112,13 @@
         </div>
       </header>
 
-      <div class="stat-strip cols-2" id="summaryStrip">
+      <div class="stat-strip cols-3" id="summaryStrip">
         <div class="stat"><b id="sumSki">0</b><span>累计滑行</span></div>
         <div class="stat"><b id="sumRuns">0</b><span>累计趟数</span></div>
         <div class="stat"><b id="sumDays">0</b><span>滑雪天数</span></div>
         <div class="stat"><b id="sumBest">--</b><span>最长一趟</span></div>
+        <div class="stat"><b id="sumMax">--</b><span>最高时速</span></div>
+        <div class="stat"><b id="sumAvg">--</b><span>平均每趟</span></div>
       </div>
 
       <div class="section" id="trendSection" hidden>
@@ -158,6 +163,13 @@
           </div>
           <input type="checkbox" class="switch" id="setSound" />
         </label>
+        <label class="row">
+          <div class="row-text">
+            <div class="row-title">记录最高时速</div>
+            <div class="row-sub">用 GPS 测速。需授权定位；锁屏或切后台会暂停</div>
+          </div>
+          <input type="checkbox" class="switch" id="setSpeed" />
+        </label>
       </div>
 
       <div class="card">
@@ -183,7 +195,7 @@
       <p class="footnote">
         所有数据只保存在这台手机的本机浏览器里，不会上传到任何服务器。<br />
         清理 Safari 数据或删除主屏幕图标会丢失记录，建议定期「导出 JSON 备份」。<br />
-        <span class="ver">版本 v1.1.0</span>
+        <span class="ver">版本 v1.2.0</span>
       </p>
     </section>
 

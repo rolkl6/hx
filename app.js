@@ -9,7 +9,7 @@
   var LS_SESSIONS = 'ski.sessions.v1';
   var LS_SETTINGS = 'ski.settings.v1';
   var LS_HINT = 'ski.hint.v1';
-  var VERSION = '1.1.0';
+  var VERSION = '1.2.0';
   var STALE_MS = 18 * 60 * 60 * 1000; // 超过 18 小时未结束的会话会被询问
 
   /* ------------------------- 小工具 ------------------------- */
@@ -99,7 +99,7 @@
 
   var active = loadJSON(LS_ACTIVE, null);
   var sessions = loadJSON(LS_SESSIONS, []);
-  var settings = Object.assign({ wakeLock: true, sound: true }, loadJSON(LS_SETTINGS, {}));
+  var settings = Object.assign({ wakeLock: true, sound: true, speed: true }, loadJSON(LS_SETTINGS, {}));
 
   if (!Array.isArray(sessions)) sessions = [];
   if (!active || typeof active !== 'object' || !Array.isArray(active.runs)) active = null;
@@ -237,6 +237,147 @@
     wakeLock = null;
   }
 
+  /* ------------------------- GPS 测速 -------------------------
+   * 现实约束（不藏着）：
+   *   - iOS 在锁屏或切到后台时会暂停网页的地理定位。所以要配合
+   *     已有的「屏幕常亮」，手机也得带在身上。
+   *   - 山地 GPS 精度通常 5–30m。直接用两次定位的位移做差分会把
+   *     十几米的误差放大成几十 km/h 的假峰值：
+   *       · 优先用 coords.speed（多普勒测速，准确得多）
+   *       · 只有没有 speed 字段时才退化为位移差分
+   *       · 精度差于 35m 的样本直接丢
+   *       · 超过 120km/h 视为跳点丢弃
+   *       · 当前速度用 5 点中值滤波
+   *       · 最高时速也只从"平滑后"的值更新 —— 避免单个跳点变成纪录
+   */
+  var SPEED_ACC_MAX = 35;   // 定位精度阈值（米）
+  var SPEED_CAP = 120;      // 合理上限，超过视为 GPS 跳点
+  var SPEED_MIN = 1;        // 低于视为静止
+  var SPEED_WINDOW = 5;     // 中值滤波窗口
+
+  var geoWatchId = null;
+  var geoLast = null;
+  var geoRecent = [];
+  var geoState = 'off';     // off | waiting | active | denied | unsupported | error
+  var geoAcc = null;
+
+  function median(list) {
+    if (!list.length) return 0;
+    var a = list.slice().sort(function (x, y) { return x - y; });
+    var mid = Math.floor(a.length / 2);
+    return a.length % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
+  }
+
+  function haversineM(a, b) {
+    var R = 6371000;
+    var rad = Math.PI / 180;
+    var dLat = (b.latitude - a.latitude) * rad;
+    var dLon = (b.longitude - a.longitude) * rad;
+    var la1 = a.latitude * rad;
+    var la2 = b.latitude * rad;
+    var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(la1) * Math.cos(la2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+  }
+
+  /* 当前时速文本（不做单位换算，调用方给 km/h） */
+  function fmtSpeed(kmh) {
+    if (typeof kmh !== 'number' || !isFinite(kmh) || kmh <= 0) return '--';
+    return String(Math.round(kmh));
+  }
+
+  function currentSpeedKmh() {
+    return geoRecent.length ? median(geoRecent) : 0;
+  }
+
+  /* 本次会话的最高时速（已完成各趟 + 进行中这趟） */
+  function activeMaxSpeed(a) {
+    if (!a) return 0;
+    var m = a.runMaxSpeed || 0;
+    for (var i = 0; i < a.runs.length; i++) {
+      if ((a.runs[i].maxSpeed || 0) > m) m = a.runs[i].maxSpeed;
+    }
+    return m;
+  }
+
+  function startGeoTracking() {
+    if (!settings.speed) { geoState = 'off'; return; }
+    if (geoWatchId !== null) return;
+    if (!navigator.geolocation) { geoState = 'unsupported'; return; }
+
+    geoLast = null;
+    geoRecent = [];
+    geoState = 'waiting';
+    try {
+      geoWatchId = navigator.geolocation.watchPosition(onGeoOk, onGeoErr, {
+        enableHighAccuracy: true,
+        maximumAge: 1000,
+        timeout: 20000
+      });
+    } catch (e) {
+      geoState = 'error';
+      geoWatchId = null;
+    }
+  }
+
+  function stopGeoTracking() {
+    if (geoWatchId !== null && navigator.geolocation) {
+      try { navigator.geolocation.clearWatch(geoWatchId); } catch (e) { /* ignore */ }
+    }
+    geoWatchId = null;
+    geoLast = null;
+    geoRecent = [];
+    geoAcc = null;
+    geoState = 'off';
+  }
+
+  function onGeoErr(err) {
+    geoState = (err && err.code === 1) ? 'denied' : 'error';
+    geoWatchId = null;
+    renderTimer();
+  }
+
+  function onGeoOk(pos) {
+    var wasActive = geoState === 'active';
+    geoState = 'active';
+    var c = pos.coords;
+    geoAcc = c.accuracy;
+
+    /* 只在滑行中采样：休息/缆车上不该刷新速度 */
+    if (!active || active.mode !== 'skiing') {
+      geoLast = null;
+      if (!wasActive) renderTimer();
+      return;
+    }
+    if (c.accuracy && c.accuracy > SPEED_ACC_MAX) {
+      renderTimer();
+      return;
+    }
+
+    var kmh = null;
+    if (typeof c.speed === 'number' && isFinite(c.speed) && c.speed >= 0) {
+      kmh = c.speed * 3.6;
+    } else if (geoLast && pos.timestamp > geoLast.t) {
+      var dt = (pos.timestamp - geoLast.t) / 1000;
+      if (dt > 0.5) kmh = haversineM(geoLast.c, c) / dt * 3.6;
+    }
+    geoLast = { c: c, t: pos.timestamp };
+
+    if (kmh === null || !isFinite(kmh)) { renderTimer(); return; }
+    if (kmh > SPEED_CAP) { renderTimer(); return; }
+    if (kmh < SPEED_MIN) kmh = 0;
+
+    geoRecent.push(kmh);
+    while (geoRecent.length > SPEED_WINDOW) geoRecent.shift();
+
+    var smooth = median(geoRecent);
+    if (smooth > (active.runMaxSpeed || 0)) {
+      active.runMaxSpeed = smooth;
+      persistActive();
+    }
+    renderTimer();
+  }
+
   /* ------------------------- Toast / Modal ------------------------- */
 
   var toastTimer = null;
@@ -313,24 +454,39 @@
       runStart: now,
       restStart: null,
       restMs: 0,
+      runMaxSpeed: 0,
       runs: []
     };
     persistActive();
     beep(880, 0.16);
     acquireWakeLock();
+    startGeoTracking();
     flashHero();
     renderAll();
     toast('开始计时 · 第 1 趟');
+    if (settings.speed && geoState === 'waiting') {
+      setTimeout(function () {
+        if (geoState === 'denied') toast('未获定位授权，最高时速将无法记录');
+      }, 2500);
+    }
   }
 
   function endRun() {
     if (!active || active.mode !== 'skiing') return;
     var now = Date.now();
     var ms = Math.max(0, now - active.runStart);
-    active.runs.push({ start: active.runStart, end: now, ms: ms });
+    active.runs.push({
+      start: active.runStart,
+      end: now,
+      ms: ms,
+      maxSpeed: Math.round(active.runMaxSpeed || 0)
+    });
     active.mode = 'resting';
     active.restStart = now;
     active.runStart = null;
+    active.runMaxSpeed = 0;
+    geoRecent = [];
+    geoLast = null;
     persistActive();
     beep(540, 0.15);
     flashHero();
@@ -345,6 +501,9 @@
     active.mode = 'skiing';
     active.runStart = now;
     active.restStart = null;
+    active.runMaxSpeed = 0;
+    geoRecent = [];
+    geoLast = null;
     persistActive();
     beep(880, 0.16);
     flashHero();
@@ -358,16 +517,23 @@
     var rest = a.restMs || 0;
 
     if (a.mode === 'skiing' && a.runStart) {
-      runs.push({ start: a.runStart, end: now, ms: Math.max(0, now - a.runStart) });
+      runs.push({
+        start: a.runStart,
+        end: now,
+        ms: Math.max(0, now - a.runStart),
+        maxSpeed: Math.round(a.runMaxSpeed || 0)
+      });
     } else if (a.mode === 'resting' && a.restStart) {
       rest += Math.max(0, now - a.restStart);
     }
 
     var ski = 0;
     var maxRun = 0;
+    var maxSpeed = 0;
     for (var i = 0; i < runs.length; i++) {
       ski += runs[i].ms;
       if (runs[i].ms > maxRun) maxRun = runs[i].ms;
+      if ((runs[i].maxSpeed || 0) > maxSpeed) maxSpeed = runs[i].maxSpeed;
     }
 
     return {
@@ -378,6 +544,7 @@
       skiMs: ski,
       restMs: rest,
       maxRunMs: maxRun,
+      maxSpeed: maxSpeed,
       createdAt: now
     };
   }
@@ -391,27 +558,54 @@
     active = null;
     persistActive();
     releaseWakeLock();
+    stopGeoTracking();
     beep(660, 0.11);
     setTimeout(function () { beep(990, 0.18); }, 130);
     renderAll();
-    toast('已保存 · 滑行 ' + fmtHuman(session.skiMs) + ' · ' + session.runs.length + ' 趟');
+    var extra = session.maxSpeed ? ' · 最高 ' + Math.round(session.maxSpeed) + 'km/h' : '';
+    toast('已保存 · 滑行 ' + fmtHuman(session.skiMs) + ' · ' + session.runs.length + ' 趟' + extra);
   }
 
   function discardSession() {
     active = null;
     persistActive();
     releaseWakeLock();
+    stopGeoTracking();
     renderAll();
     toast('已丢弃本次计时');
   }
 
   /* ------------------------- 渲染：计时页 ------------------------- */
 
+  /* 时速药丸的状态呈现：关闭/不支持时隐藏，定位中与失败时给出明确文案 */
+  function renderSpeedPill(el) {
+    if (!el) return;
+    if (!settings.speed || geoState === 'off' || geoState === 'unsupported') {
+      el.hidden = true;
+      return;
+    }
+    el.hidden = false;
+    el.className = 'hero-pill pill-speed';
+    if (geoState === 'active') {
+      el.textContent = fmtSpeed(currentSpeedKmh()) + ' km/h';
+    } else if (geoState === 'waiting') {
+      el.textContent = '定位中…';
+      el.classList.add('is-idle');
+    } else if (geoState === 'denied') {
+      el.textContent = '未授权定位';
+      el.classList.add('is-blocked');
+    } else {
+      el.textContent = '定位异常';
+      el.classList.add('is-blocked');
+    }
+  }
+
   function renderTimer() {
     var now = Date.now();
     var hero = $('hero');
     var btnPrimary = $('btnPrimary');
     var btnEnd = $('btnEnd');
+    var speedPill = $('liveSpeed');
 
     btnEnd.hidden = !active;
 
@@ -423,8 +617,9 @@
       var pill = $('livePill');
       pill.textContent = '点下方按钮开始计时';
       pill.className = 'hero-pill';
+      if (speedPill) speedPill.hidden = true;
       setStat($('statRuns'), '0');
-      $('statLast').textContent = '--:--';
+      setStat($('statMax'), '--');
       $('statRest').textContent = '00:00';
       btnPrimary.textContent = '开始滑雪';
       btnPrimary.className = 'btn btn-primary';
@@ -455,9 +650,13 @@
       btnPrimary.className = 'btn btn-rest';
     }
 
-    /* 趟数 / 上一趟用 setStat（变化时弹一下）；休息计时逐秒跳动，用 setText 避免每秒都弹 */
+    renderSpeedPill(speedPill);
+
+    /* 趟数 / 最高时速用 setStat（变化时弹一下）；
+     * 休息计时逐秒跳动，用 setText 避免每秒都弹 */
     setStat($('statRuns'), active.runs.length);
-    setStat($('statLast'), active.runs.length ? fmtShort(active.runs[active.runs.length - 1].ms) : '--:--');
+    var maxSpd = activeMaxSpeed(active);
+    setStat($('statMax'), maxSpd > 0 ? fmtSpeed(maxSpd) + ' km/h' : '--');
     setText($('statRest'), fmtShort(rest));
   }
 
@@ -494,9 +693,10 @@
     for (var i = runs.length - 1; i >= 0; i--) {
       var r = runs[i];
       var isNew = justAdded && i === runs.length - 1;
+      var spd = r.maxSpeed ? '<span class="run-speed">' + Math.round(r.maxSpeed) + ' km/h</span>' : '';
       html += '<div class="run-item' + (isNew ? ' is-new' : '') + '">' +
         '<span class="run-idx">' + (i + 1) + '</span>' +
-        '<span class="run-dur">' + fmtShort(r.ms) + '</span>' +
+        '<span class="run-main"><span class="run-dur">' + fmtShort(r.ms) + '</span>' + spd + '</span>' +
         '<span class="run-time">' + fmtTime(r.start) + ' – ' + fmtTime(r.end) + '</span>' +
         '<span class="run-bar" style="--w:' + Math.round(r.ms / liveBarMax * 100) + '%"></span>' +
         '</div>';
@@ -704,6 +904,7 @@
     var bestRun = 0;
     var days = {};
 
+    var bestSpeed = 0;
     sessions.forEach(function (s) {
       var ski = sessionSki(s);
       totalSki += ski;
@@ -712,12 +913,15 @@
       if (ski > best) best = ski;
       var m = sessionMaxRun(s);
       if (m > bestRun) bestRun = m;
+      if ((s.maxSpeed || 0) > bestSpeed) bestSpeed = s.maxSpeed;
     });
 
     setStat($('sumSki'), totalSki ? fmtHM(totalSki) : '0');
     setStat($('sumRuns'), totalRuns);
     setStat($('sumDays'), Object.keys(days).length);
     setStat($('sumBest'), bestRun ? fmtShort(bestRun) : '--');
+    setStat($('sumMax'), bestSpeed > 0 ? fmtSpeed(bestSpeed) + ' km/h' : '--');
+    setStat($('sumAvg'), totalRuns ? fmtShort(totalSki / totalRuns) : '--');
 
     var list = $('sessionList');
 
@@ -740,9 +944,12 @@
       var body = '';
       if (runs.length) {
         for (var i = 0; i < runs.length; i++) {
+          var rs = runs[i].maxSpeed
+            ? '<span class="run-speed">' + Math.round(runs[i].maxSpeed) + ' km/h</span>'
+            : '';
           body += '<div class="run-item">' +
             '<span class="run-idx">' + (i + 1) + '</span>' +
-            '<span class="run-dur">' + fmtShort(runs[i].ms) + '</span>' +
+            '<span class="run-main"><span class="run-dur">' + fmtShort(runs[i].ms) + '</span>' + rs + '</span>' +
             '<span class="run-time">' + fmtTime(runs[i].start) + ' – ' + fmtTime(runs[i].end) + '</span>' +
             '<span class="run-bar" style="--w:' + Math.round(runs[i].ms / maxRun * 100) + '%"></span>' +
             '</div>';
@@ -760,7 +967,8 @@
         '</div>' +
         '<div class="s-right">' +
         '<div class="s-ski">' + fmtHM(ski) + '</div>' +
-        '<div class="s-sub">' + runs.length + ' 趟 · 最长 ' + fmtShort(maxRun) + '</div>' +
+        '<div class="s-sub">' + runs.length + ' 趟 · 最长 ' + fmtShort(maxRun) +
+        (s.maxSpeed ? ' · ' + Math.round(s.maxSpeed) + 'km/h' : '') + '</div>' +
         '</div>' +
         '</summary>' +
         '<div class="s-body">' + body +
@@ -779,6 +987,7 @@
   function renderSettings() {
     $('setWake').checked = !!settings.wakeLock;
     $('setSound').checked = !!settings.sound;
+    $('setSpeed').checked = !!settings.speed;
     var chip = $('chipWake');
     chip.classList.toggle('is-on', !!settings.wakeLock);
     chip.textContent = settings.wakeLock ? '屏幕常亮 开' : '屏幕常亮 关';
@@ -820,7 +1029,7 @@
 
   function exportCSV() {
     if (!sessions.length) { toast('还没有记录可以导出'); return; }
-    var rows = [['日期', '星期', '开始', '结束', '滑行时长', '滑行分钟', '趟数', '最长单趟分钟', '休息分钟', '各趟分钟']];
+    var rows = [['日期', '星期', '开始', '结束', '滑行时长', '滑行分钟', '趟数', '最长单趟分钟', '休息分钟', '最高时速kmh', '各趟分钟', '各趟最高时速']];
 
     sessions.slice().sort(function (a, b) { return a.startedAt - b.startedAt; }).forEach(function (s) {
       var runs = s.runs || [];
@@ -836,7 +1045,9 @@
         runs.length,
         (sessionMaxRun(s) / 60000).toFixed(1),
         ((s.restMs || 0) / 60000).toFixed(1),
-        runs.map(function (r) { return (r.ms / 60000).toFixed(1); }).join(' / ')
+        s.maxSpeed ? Math.round(s.maxSpeed) : '',
+        runs.map(function (r) { return (r.ms / 60000).toFixed(1); }).join(' / '),
+        runs.map(function (r) { return r.maxSpeed ? Math.round(r.maxSpeed) : '-'; }).join(' / ')
       ]);
     });
 
@@ -953,9 +1164,11 @@
     var bar = $('installHint');
     if (!bar) return;
     bar.hidden = false;
+    document.body.classList.add('has-hint');
     $('hintClose').addEventListener('click', function () {
       try { localStorage.setItem(LS_HINT, '1'); } catch (e) { /* ignore */ }
       bar.hidden = true;
+      document.body.classList.remove('has-hint');
     });
   }
 
@@ -1014,6 +1227,18 @@
       settings.sound = this.checked;
       persistSettings();
       if (settings.sound) beep(880, 0.12);
+    });
+
+    $('setSpeed').addEventListener('change', function () {
+      settings.speed = this.checked;
+      persistSettings();
+      if (settings.speed) {
+        if (active) startGeoTracking();
+        toast('已开启测速，首次使用会请求定位授权');
+      } else {
+        stopGeoTracking();
+      }
+      renderAll();
     });
 
     var tabs = document.querySelectorAll('.tab');
@@ -1083,6 +1308,8 @@
       persistActive();
       if (document.visibilityState === 'visible') {
         if (active && settings.wakeLock) acquireWakeLock();
+        /* iOS 会在后台期间掐掉 watchPosition，回到前台重建一次更可靠 */
+        if (active) { stopGeoTracking(); startGeoTracking(); }
         renderAll();
       }
     });
@@ -1126,6 +1353,9 @@
     registerSW();
     setInterval(tickLive, 250);
     checkStaleSession();
+
+    /* 上次没结束的会话被恢复后，继续测速 */
+    if (active) startGeoTracking();
 
     /* 回到前台时立刻校正一次显示 */
     window.addEventListener('focus', function () { if (active) tickLive(); });

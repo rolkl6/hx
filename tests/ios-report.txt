@@ -11,6 +11,13 @@ PASS  初始 mainTime   "00:00:00"
 PASS  modalRoot 处于 display:none
 PASS  点击 开始滑雪
 PASS  点击后进入滑行状态   "滑行中 · 第 1 趟"
+PASS  测速 启动后请求定位
+PASS  测速 初始显示定位中   "定位中…"
+PASS  测速 当前时速显示   "45 km/h"
+PASS  测速 最高时速统计   "45 km/h"
+PASS  测速 单点跳点被丢弃   "45 km/h"
+PASS  测速 低精度样本被丢弃   "45 km/h"
+PASS  测速 持续高速才更新最高值   "60 km/h"
 PASS  滑行 10 分钟后主计时   "00:10:00"
 PASS  点击 结束这趟
 PASS  结束一趟后趟数=1   "1"
@@ -32,9 +39,13 @@ PASS  会话已写入   1
 PASS  滑行时长=30分   1800000
 PASS  休息时长=5分   300000
 PASS  两趟明细正确
+PASS  测速 会话记录最高时速   60
+PASS  测速 第一趟记录最高时速   60
+PASS  测速 保存后停止定位监听
 PASS  点击 记录标签
 PASS  切到记录页   true
 PASS  记录页统计   "30m"
+PASS  记录页最高时速   "60 km/h"
 PASS  历史卡片可点开   "div.s-date"
 PASS  点击 设置标签
 PASS  切到设置页   true
@@ -55,6 +66,7 @@ PASS  点击 计时标签
 PASS  二次进入后 #btnPrimary 仍可点中   "button#btnPrimary.btn.btn-primary"
 PASS  二次进入后 .tab[data-tab="settings"] 仍可点中   "use.[object.SVGAnimatedString]"
 PASS  二次进入后 #chipWake 仍可点中   "button#chipWake.chip"
+PASS  记录页汇总最高时速   "55 km/h"
 PASS  趋势图已渲染   "最近 5 个滑雪日平均 31m，单日最长 49m"
 PASS  趋势图数据点数正确   6
 PASS  数据表可展开且有对应数据   6
@@ -65,4 +77,4 @@ PASS  最长那一趟为 100%   "100% 67% 83%"
 
 页面级错误: (无)
 
-RESULT: PASS - 61 项通过
+RESULT: PASS - 73 项通过
